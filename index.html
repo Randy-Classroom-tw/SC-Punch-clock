@@ -4,13 +4,18 @@
   <meta charset="UTF-8" />
   <title>SC_Office_ANN</title>
   <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=1.0, user-scalable=no" />
+  <meta name="gas-url" content="<?!= ScriptApp.getService().getUrl() ?>">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; img-src 'self' https: data: blob:; font-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; frame-ancestors 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), camera=(), microphone=()">
   
-  <!-- 預加載關鍵資源 -->
+  <!-- 預加載資源 -->
   <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons" as="style">
   <link rel="preload" href="https://i.imgur.com/YHBBnuO.jpeg" as="image" crossorigin="anonymous">
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap" as="style">
   
-  <!-- 添加 jQuery UI Datetimepicker 資源 -->
+  <!-- jQuery UI Datetimepicker -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/dark-hive/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -22,7 +27,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap">
   
-  <!-- jQuery UI Datetimepicker 繁體中文設定 -->
+  <!-- 繁體中文設定 -->
   <script>
     $(function() {
       $.datepicker.regional['zh-TW'] = {
@@ -67,10 +72,9 @@
   </script>
 </head>
 
-<!-- 關鍵CSS內聯，避免渲染阻塞 -->
   <style>
     :root {
-      /* 系統主題色變量 */
+      /* 主題色彩 */
       --color-bg-primary: #1a1a1a;
       --color-bg-secondary: rgba(20, 20, 20, 0.95);
       --color-bg-tertiary: rgba(40, 40, 40, 0.8);
@@ -79,7 +83,7 @@
       --color-text-success: #2ecc71;
       --color-text-error: #e74c3c;
       
-      /* 按鈕顏色變量 */
+      /* 按鈕顏色 */
       --btn-on-from: #28a745;
       --btn-on-to: #1e7e34;
       --btn-off-from: #e74c3c;
@@ -90,15 +94,22 @@
       --btn-test-to: #e67e22;
       --btn-form-from: #9c27b0;
       --btn-form-to: #673ab7;
-      --btn-schedule-from: #20c997;
-      --btn-schedule-to: #0b845e;
+      --btn-schedule-from: #e91e63;
+      --btn-schedule-to: #c2185b;
       --btn-disabled-from: #666;
       --btn-disabled-to: #555;
-      /* 新增公告按鈕顏色變數 */
+      /* 公告按鈕 */
       --btn-notice-from: #607d8b;
       --btn-notice-to: #455a64;
+      /* 主管限定 */
+      --btn-manager-from: #795548;
+      --btn-manager-to: #5d4037;
+      /* 個人資訊 */
+      --btn-personal-from: #00bcd4;
+      --btn-personal-to: #0097a7;
       
-      /* 間距與尺寸變量 */
+      
+      /* 間距設定 */
       --spacing-xs: 4px;
       --spacing-sm: 8px;
       --spacing-md: 16px;
@@ -116,7 +127,7 @@
       pointer-events: none !important;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html { font-size: 100%; }
     body {
       background: linear-gradient(145deg, #0a0a0a, var(--color-bg-primary));
       font-family: 'Roboto Mono', monospace;
@@ -211,11 +222,19 @@
       gap: var(--spacing-md);
       justify-content: center;
       margin-bottom: 20px;
+      /* 確保在小螢幕上也能正常顯示 */
+      align-items: center;
     }
     .btn {
-      flex: 1 1 120px;
-      padding: 12px;
-      font-size: 18px;
+      /* 固定尺寸確保一致性 */
+      width: 150px;
+      height: 50px;
+      min-width: 150px;
+      min-height: 50px;
+      max-width: 150px;
+      max-height: 50px;
+      padding: 0;
+      font-size: 17px;
       border: none;
       border-radius: var(--border-radius-md);
       cursor: pointer;
@@ -223,6 +242,15 @@
       color: #fff;
       background-size: 100% 100%;
       transition: none;
+      /* 文字置中 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      /* 防止文字換行 */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .btn:hover { transform: translateY(-3px); }
     .btn:active { transform: translateY(0); }
@@ -238,8 +266,178 @@
     .btn-test { background: linear-gradient(to right, var(--btn-test-from) 0%, var(--btn-test-to) 100%); }
     .btn-form { background: linear-gradient(to right, var(--btn-form-from) 0%, var(--btn-form-to) 100%); }
     .btn-schedule { background: linear-gradient(to right, var(--btn-schedule-from) 0%, var(--btn-schedule-to) 100%); }
-    /* 新增按鈕樣式 */
+    /* 新按鈕樣式 */
     .btn-notice { background: linear-gradient(to right, var(--btn-notice-from) 0%, var(--btn-notice-to) 100%); }
+    .btn-manager { background: linear-gradient(to right, var(--btn-manager-from) 0%, var(--btn-manager-to) 100%); }
+    .btn-personal { background: linear-gradient(to right, var(--btn-personal-from) 0%, var(--btn-personal-to) 100%); }
+    
+    .ui-timepicker-div {
+      background: #333;
+      color: #fff;
+      width: 280px;
+      min-width: 280px;
+      max-width: 320px;
+      background-color: #222;
+      padding: 15px;
+      border-radius: 0;
+      border: none;
+      border-top: 1px solid #444;
+      box-shadow: none;
+    }
+
+    /* 🔧 修復：完全隱藏 jQuery UI Timepicker 的 grid 顯示元素 */
+    .ui-timepicker-grid,
+    .ui-timepicker-div .ui-timepicker-hour-label,
+    .ui-timepicker-div .ui-timepicker-minute-label,
+    .ui-timepicker-div .ui-widget-content,
+    .ui-timepicker-div table.ui-timepicker-table,
+    .ui-timepicker-div [class*="grid"],
+    .ui-timepicker-div [class*="table"] {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    #ui-datepicker-div {
+      z-index: 10000 !important;
+      background-color: #222 !important;
+      padding: 0 !important;
+      border: none !important;
+      margin-top: 0 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+      position: absolute !important;
+      transform: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 320px !important;
+      min-width: 280px !important;
+      max-width: 360px !important;
+    }
+    
+    /* 確保月份切換時保持一致性 */
+    #ui-datepicker-div .ui-datepicker {
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* 確保日曆表格佈局穩定 */
+    #ui-datepicker-div .ui-datepicker-calendar {
+      width: 100% !important;
+      table-layout: fixed !important;
+    }
+
+    .ui-timepicker-div dl {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin: 0;
+      padding: 0;
+    }
+
+    .ui-slider {
+      display: none;
+    }
+
+    .ui-timepicker-div dd {
+      margin: 0;
+      padding: 0;
+      width: 48%;
+      text-align: center;
+    }
+
+    .ui-timepicker-div dd.ui_tpicker_hour:before {
+      content: '小時';
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .ui-timepicker-div dd.ui_tpicker_minute:before {
+      content: '分鐘';
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .ui-timepicker-div select {
+      width: 95%;
+      margin: 0 auto;
+      text-align: center;
+      text-align-last: center;
+      -moz-text-align-last: center;
+      -webkit-text-align-last: center;
+    }
+
+    .ui-timepicker-div select option {
+      text-align: center;
+    }
+
+    .ui-timepicker-div .timepicker-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #444;
+    }
+
+    .ui-timepicker-div .timepicker-button {
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .ui-timepicker-div .timepicker-button.confirm {
+      background-color: #2c7a3e;
+      border-color: #1e5a2d;
+    }
+
+    .ui-timepicker-div .timepicker-button.cancel {
+      background-color: #666;
+      border-color: #555;
+    }
+
+    .ui-timepicker-div .timepicker-button:hover {
+      opacity: 0.9;
+    }
+    
+    @media (max-width: 480px) {
+      .btn {
+        width: 140px;
+        height: 48px;
+        min-width: 140px;
+        min-height: 48px;
+        max-width: 140px;
+        max-height: 48px;
+        font-size: 16px;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .btn {
+        width: 130px;
+        height: 46px;
+        min-width: 130px;
+        min-height: 46px;
+        max-width: 130px;
+        max-height: 46px;
+        font-size: 15px;
+      }
+      
+      .btn-group {
+        gap: 12px;
+      }
+    }
     
     #response {
       margin-top: 10px;
@@ -436,16 +634,56 @@
       position: fixed;
       top: 10px;
       right: 10px;
-      padding: 6px 12px;
+      padding: 6px 12px;  /* 統一與 AI Bot 的 padding */
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: bold;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       z-index: 999;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .network-status .material-icons {
+      font-size: 18px;
+    }
+    .network-good { background-color: rgba(76, 175, 80, 0.9); color: #fff; }      /* 良好 - 深綠色 */
     .network-online { background-color: rgba(40, 167, 69, 0.8); color: #fff; }
-    .network-offline { background-color: rgba(220, 53, 69, 0.8); color: #fff; }
+    .network-medium { background-color: rgba(255, 193, 7, 0.9); color: #fff; font-weight: 600; }  /* 一般 - 黃色，改用白色文字 */
+    .network-poor { background-color: rgba(255, 152, 0, 0.9); color: #fff; }      /* 緩慢 - 橘色 */
+    .network-offline { background-color: rgba(220, 53, 69, 0.8); color: #fff; }   /* 離線 - 紅色 */
+    
+    .help-status {
+      position: fixed;
+      top: 10px;
+      right: 110px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      z-index: 999;
+      transition: all 0.3s ease;
+      background-color: rgba(52, 152, 219, 0.8);
+    }
+    
+    .help-status a {
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .help-status .material-icons {
+      font-size: 18px;
+    }
+    
+    .help-status:hover {
+      background-color: rgba(52, 152, 219, 1);
+      transform: translateY(-1px);
+    }
     .error-message {
       position: absolute;
       top: 100%;
@@ -459,18 +697,8 @@
       transition: opacity 0.5s ease;
     }
     .error-message.show { display: block; opacity: 1; }
-    .browser-notice {
-      padding: var(--spacing-sm) var(--spacing-md);
-      background-color: rgba(255, 193, 7, 0.2);
-      border-left: 4px solid #ffc107;
-      border-radius: 4px;
-      margin-bottom: var(--spacing-md);
-      text-align: center;
-      display: none;
-    }
-    .browser-notice.show { display: block; }
 
-/* 表單模態框樣式 */
+
     .form-modal {
       background: rgba(28, 28, 30, 0.95);
       border-radius: 16px;
@@ -481,8 +709,8 @@
       overflow: hidden;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
       animation: modalFadeIn 0.3s ease;
-      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
     }
     
     @keyframes modalFadeIn {
@@ -581,6 +809,32 @@
       color: #9c27b0;
     }
     
+    /* 查詢介面的圖示顏色 */
+    #cardCorrectionFormQuery .form-icon {
+      color: #03a9f4;
+    }
+    
+    #overtimeFormQuery .form-icon {
+      color: #ff9800;
+    }
+    
+    #leaveRequestFormQuery .form-icon {
+      color: #4caf50;
+    }
+    
+    #shiftChangeFormQuery .form-icon {
+      color: #9c27b0;
+    }
+    
+    /* 查詢類型選擇介面的圖示樣式 */
+    #btnAttendanceQuery .form-icon {
+      color: #4caf50;  /* 綠色 - 出勤紀錄 */
+    }
+    
+    #btnFormQuery .form-icon {
+      color: #3498db;  /* 藍色 - 表單紀錄 */
+    }
+    
     .form-info {
       flex: 1;
     }
@@ -601,13 +855,73 @@
       color: #777;
     }
     
-    /* 對話框背景模糊效果 */
-    .overlay.show.form-overlay {
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
+    /* 維修中狀態樣式 */
+    .form-item.maintenance {
+      background-color: rgba(128, 128, 128, 0.2);
+      cursor: not-allowed;
+      opacity: 0.6;
+      position: relative;
     }
     
-    /* 骨架屏動畫 */
+    .form-item.maintenance .form-icon {
+      color: #888 !important;
+      background: linear-gradient(135deg, rgba(128,128,128,0.1), rgba(128,128,128,0.05));
+    }
+    
+    .form-item.maintenance .form-info h4 {
+      color: #888;
+    }
+    
+    .form-item.maintenance .form-info p {
+      color: #666;
+    }
+    
+    .form-item.maintenance .form-arrow {
+      color: #666;
+    }
+    
+    .form-item.maintenance:hover {
+      background-color: rgba(128, 128, 128, 0.2);
+    }
+    
+    .form-item.maintenance:after {
+      display: none !important;
+    }
+    
+    .form-item.maintenance::before {
+      content: '維修中';
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      background: #666;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 10;
+    }
+    
+    .btn.disabled-button {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: linear-gradient(to right, var(--btn-disabled-from), var(--btn-disabled-to)) !important;
+    }
+    
+    .btn.disabled-button:hover {
+      transform: none !important;
+    }
+    
+    .btn.disabled-button:active {
+      transform: none !important;
+    }
+    
+    .overlay.show.form-overlay {
+      -webkit-backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px);
+    }
+    
     @keyframes shimmer {
       0% { background-position: -1000px 0; }
       100% { background-position: 1000px 0; }
@@ -620,23 +934,22 @@
       border-radius: 4px;
     }
     
-    /* 按鈕冷卻的CSS變量 */
     .btn-cooldown {
       --progress: 0%;
       background-image: linear-gradient(to right, var(--color-from) 0%, var(--color-to) var(--progress), #666 var(--progress), #555 100%) !important;
       transition: --progress 0.3s linear;
     }
     
-    /* 表單樣式 */
     .form-content {
       padding: 20px;
-      max-height: 60vh;
+      max-height: 75vh;
       overflow-y: auto;
       overflow-x: hidden !important;
       max-width: 100% !important;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* 日期和時間輸入容器 */
     .date-input-container,
     .time-input-container {
       display: flex;
@@ -644,7 +957,6 @@
       width: 100%;
     }
     
-    /* 隱藏空白填充元素 */
     .spacer-element {
       width: 60px;
       margin-left: 10px;
@@ -686,22 +998,43 @@
       margin-left: 10px;
       font-weight: bold;
     }
+    
+    /* 表單內容最後一個子元素的底部間距 */
+    .form-content > *:last-child {
+      margin-bottom: 5px !important;
+    }
 
     .form-buttons-container {
       display: flex;
-      padding: 15px 20px 20px;
-      gap: 10px;
+      padding: 12px 16px;
+      gap: 8px;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: space-between;
+      background-color: transparent; /* 透明背景，完全繼承父容器顏色 */
+      border-radius: 8px;
+      margin-top: 5px;  /* 改為 5px */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      align-items: center;
+      /* 緊湊單行設計 */
+      min-height: 44px;
     }
 
     .form-buttons-container .btn {
       flex: 1;
-      padding: 12px;
+      padding: 8px 8px;  /* 減少水平 padding 從 12px 到 8px */
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 32px;
     }
 
     .btn-confirm:disabled {
@@ -710,7 +1043,69 @@
       color: #eee;
     }
 
-    /* 移動裝置適配 */
+    /* 上傳按鈕特殊樣式 */
+    .btn-upload {
+      background-color: transparent !important;
+      color: #f5a623 !important;
+      border: 2px solid #f5a623 !important;
+    }
+
+    .btn-upload:hover {
+      background-color: #f5a623 !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-upload:active {
+      transform: translateY(0);
+    }
+
+    /* 動態按鈕排序 */
+    .form-buttons-container.two-buttons {
+      justify-content: space-between;
+    }
+    
+    /* 單一按鈕置中顯示 */
+    .form-buttons-container.one-button {
+      justify-content: center;
+    }
+    
+    .form-buttons-container.one-button .btn {
+      max-width: 250px;
+    }
+
+    .form-buttons-container.three-buttons {
+      justify-content: space-between;
+    }
+
+    .form-buttons-container.three-buttons .btn-cancel {
+      order: 1; /* 取消按鈕在左 */
+    }
+
+    .form-buttons-container.three-buttons .btn-confirm {
+      order: 2; /* 提交按鈕在中 */
+    }
+
+    .form-buttons-container.three-buttons .btn-upload {
+      order: 3; /* 上傳按鈕在右 */
+    }
+
+    /* 🔧 修復：平均寬度分配 - 確保三按鈕不會溢出 */
+    .form-buttons-container.three-buttons .btn-cancel {
+      flex: 1 1 0; /* 平均分配 */
+      min-width: 0; /* 允許縮小 */
+    }
+
+    .form-buttons-container.three-buttons .btn-confirm {
+      flex: 1 1 0; /* 平均分配 */
+      min-width: 0; /* 允許縮小 */
+    }
+
+    .form-buttons-container.three-buttons .btn-upload {
+      flex: 1 1 0; /* 平均分配 */
+      min-width: 0; /* 允許縮小 */
+    }
+
     @media (max-width: 480px) {
       .form-modal {
         width: 95%;
@@ -718,6 +1113,7 @@
       
       .form-content {
         padding: 15px;
+        max-height: 85vh;
       }
       
       .date-input-container,
@@ -731,18 +1127,27 @@
         height: 38px;
         font-size: 14px;
       }
+      
+      /* 🔧 修復：小螢幕三按鈕佈局優化 */
+      .form-buttons-container.three-buttons {
+        gap: 6px; /* 縮小間距 */
+      }
+      
+      .form-buttons-container.three-buttons .btn {
+        padding: 8px 10px; /* 縮小內邊距 */
+        font-size: 13px; /* 縮小字體 */
+        gap: 4px; /* 縮小圖標間距 */
+      }
+      
+      /* 平均分配已在上方設定，無需特殊處理 */
     }
 
-/* jQuery UI Datetimepicker 自定義樣式 - 修正版 */
     .ui-datepicker {
       background: #333;
       color: #fff;
       border: 1px solid #555;
       box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-      width: 280px;
-      min-width: 280px;
-      max-width: 320px;
-      padding: 10px;
+        padding: 10px;
       box-sizing: border-box;
     }
     
@@ -785,39 +1190,23 @@
       color: #4CAF50;
     }
     
-    /* 時間選擇器樣式 - 修正版 */
     .ui-timepicker-div {
       background: #333;
       color: #fff;
-      width: 280px;
-      min-width: 280px;
-      max-width: 320px;
       background-color: #222;
       padding: 15px;
       border-radius: 0;
       border: none;
       border-top: 1px solid #444;
       box-shadow: none;
-    }
+      }
     
-    /* 確保顯示在頂層 */
-    #ui-datepicker-div {
-      z-index: 10000;
-      background-color: #222;
-      padding: 0;
-      border: none;
-      margin-top: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    
-    /* 移除背景層 */
     .ui-datepicker-buttonpane,
     .ui-timepicker-buttonpane {
       background: transparent;
       border: none;
     }
     
-    /* 確保日期/時間輸入框文字靠左 */
     .form-input,
     input.datepicker,
     input.timepicker {
@@ -825,13 +1214,11 @@
       padding-left: 15px;
     }
     
-    /* 輸入框固定高度 */
     .form-input, .weekday-display, .date-input-container, .time-input-container, .radio-option {
       height: 42px;
       box-sizing: border-box;
     }
     
-    /* 星期顯示元素固定寬度和對齊 */
     .weekday-display {
       width: 60px;
       display: flex;
@@ -839,7 +1226,6 @@
       align-items: center;
     }
     
-    /* 隱藏時間標籤和文字 */
     .ui-timepicker-div .ui_tpicker_time,
     .ui-timepicker-div .ui_tpicker_time_label,
     .ui-timepicker-div .ui_tpicker_hour_label,
@@ -847,7 +1233,6 @@
       display: none;
     }
     
-    /* 時間選擇器布局 */
     .ui-timepicker-div dl {
       display: flex;
       flex-direction: row;
@@ -857,7 +1242,6 @@
       padding: 0;
     }
     
-    /* 單選框樣式 */
     .radio-option {
       transition: background-color 0.2s, transform 0.1s;
       display: flex;
@@ -871,22 +1255,18 @@
       transform: scale(0.98);
     }
     
-    /* 動畫效果 */
     .checkmark {
       transition: opacity 0.2s;
     }
     
-    /* 確保選擇器有適當的邊距 */
     .ui-datepicker, .ui-timepicker-div {
       margin-top: 0;
     }
     
-    /* 移除所有滑塊 */
     .ui-slider {
       display: none;
     }
     
-    /* 調整小時和分鐘容器 */
     .ui-timepicker-div dd {
       margin: 0;
       padding: 0;
@@ -894,7 +1274,6 @@
       text-align: center;
     }
     
-    /* 添加自定義標籤 */
     .ui-timepicker-div dd.ui_tpicker_hour:before {
       content: '小時';
       display: block;
@@ -913,22 +1292,19 @@
       text-align: center;
     }
     
-    /* 時間選擇器選項居中 */
     .ui-timepicker-div select {
       width: 95%;
       margin: 0 auto;
       text-align: center;
       text-align-last: center;
-      -moz-text-align-last: center;
       -webkit-text-align-last: center;
+      -moz-text-align-last: center;
     }
     
-    /* 確保選項文字居中 */
     .ui-timepicker-div select option {
       text-align: center;
     }
     
-    /* 時間選擇器按鈕容器 */
     .ui-timepicker-div .timepicker-buttons {
       display: flex;
       justify-content: space-between;
@@ -937,7 +1313,6 @@
       border-top: 1px solid #444;
     }
     
-    /* 時間選擇器按鈕樣式 */
     .ui-timepicker-div .timepicker-button {
       background-color: #333;
       color: #fff;
@@ -1104,7 +1479,6 @@
       max-width: 100% !important;
     }
     
-    /* 修改所有內部元素確保不超出容器 */
     .form-group,
     .form-input,
     .form-textarea,
@@ -1119,10 +1493,12 @@
     /* 必填標記樣式 */
     .required-mark {
       color: #ff4444;
-      font-size: 12px;
+      font-size: 16px;
       margin-left: 5px;
       font-weight: normal;
       white-space: nowrap;
+      font-family: 'Material Icons';
+      vertical-align: middle;
     }
     
     /* 禁止表單左右滑動的樣式 - 星期顯示修復版 */
@@ -1177,7 +1553,6 @@
       box-sizing: border-box !important;
     }
     
-    /* 錯誤訊息置中 */
     .form-error-container {
       text-align: center !important;
     }
@@ -1210,6 +1585,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    /* 佐證文件提示樣式 - 橙色背景 */
+    .file-requirement-hint {
+      background: rgba(255, 152, 0, 0.1) !important;
+      border: 1px solid #ff9800 !important;
+      border-radius: 8px !important;
+      padding: 12px 16px !important;
+      margin-bottom: 15px !important;
+      text-align: center !important;
+      color: #ff9800 !important;
+      font-weight: 500 !important;
+      font-size: 16px !important;
+    }
+
+    /* 行內錯誤提示樣式 */
+    .form-group .error-inline {
+      display: none;
+      color: #ff4444;
+      font-size: 12px;
+      margin-top: 5px;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .form-group.has-error .error-inline {
+      display: flex;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .form-group.has-error input,
+    .form-group.has-error select,
+    .form-group.has-error textarea {
+      border-color: #ff4444 !important;
+      background-color: rgba(255, 68, 68, 0.05);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .file-upload-note .material-icons {
@@ -1275,19 +1696,62 @@
         font-size: 12px;
       }
     }
+
+    /* V3 查詢記錄表格樣式 */
+    .record-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 15px;
+      color: #fff;
+    }
+    .record-table th, .record-table td {
+      border: 1px solid #555;
+      padding: 10px 8px;
+      text-align: center;
+      word-wrap: break-word; /* 避免文字過長換行 */
+    }
+    .record-table th {
+      background-color: #444;
+      font-weight: bold;
+    }
+    .record-table tbody tr:nth-child(odd) {
+      background-color: #2c2c2c;
+    }
+    .record-table .time-in {
+      color: #2ecc71; /* 綠色 */
+      font-weight: bold;
+    }
+    .record-table .time-out {
+      color: #e74c3c; /* 紅色 */
+      font-weight: bold;
+    }
+    .info-message {
+      text-align: center;
+      color: #999;
+      margin-top: 20px;
+      font-size: 16px;
+    }
   </style>
 
 <body>
-  <div id="networkStatus" class="network-status network-online">已連線</div>
+  <div id="networkStatus" class="network-status network-good">
+    <span class="material-icons">wifi</span>
+    <span class="status-text">良好</span>
+  </div>
+  <div id="helpSupport" class="help-status">
+    <a href="https://line.me/R/ti/p/@934pxusr" target="_blank">
+      <span class="material-icons">smart_toy</span>
+      <span>AI Bot</span>
+    </a>
+  </div>
   <div class="container">
     <img class="logo" src="https://i.imgur.com/YHBBnuO.jpeg" alt="Logo" crossorigin="anonymous">
     <h1>SC_Office_ANN</h1>
     <h2>請鍵入身分證後四碼執行打卡</h2>
-    <div id="safariNotice" class="browser-notice">
-      <p>若遇到打卡問題｜請截圖回報營運組</p>
-    </div>
+
     <form id="idForm">
-      <label for="idCode">請點擊下方框內輸入後四碼</label>
+      <label for="idCode">請點擊下方框內鍵入後四碼</label>
       <div class="input-group">
         <input 
           type="password" 
@@ -1309,14 +1773,18 @@
       </div>
     </form>
     <div class="btn-group">
+      <!-- 第一行：上班、下班、各項表單 -->
       <button type="button" class="btn btn-on" id="btnOn" data-original-text="上班" disabled>上班</button>
       <button type="button" class="btn btn-off" id="btnOff" data-original-text="下班" disabled>下班</button>
-      <button type="button" class="btn btn-query" id="btnQuery" data-original-text="查詢記錄" disabled>查詢記錄</button>
-      <button type="button" class="btn btn-test" id="btnTest" data-original-text="測試定位" disabled>測試定位</button>
       <button type="button" class="btn btn-form" id="btnForm" data-original-text="各項表單" disabled>各項表單</button>
+      <!-- 第二行：查詢紀錄、查閱班表、查閱公告 -->
+      <button type="button" class="btn btn-query" id="btnQuery" data-original-text="查詢紀錄" disabled>查詢紀錄</button>
       <button type="button" class="btn btn-schedule" id="btnSchedule" data-original-text="查閱班表" disabled>查閱班表</button>
-      <!-- 新增內部公告按鈕 -->
-      <button type="button" class="btn btn-notice" id="btnNotice" data-original-text="內部公告" disabled>內部公告</button>
+      <button type="button" class="btn btn-notice" id="btnNotice" data-original-text="查閱公告" disabled>查閱公告</button>
+      <!-- 第三行：主管限定、個人資訊、測試定位 -->
+      <button type="button" class="btn btn-manager disabled-button" id="btnManager" data-original-text="主管限定" disabled>主管限定</button>
+      <button type="button" class="btn btn-personal disabled-button" id="btnPersonal" data-original-text="Duty日誌" disabled>Duty日誌</button>
+      <button type="button" class="btn btn-test" id="btnTest" data-original-text="測試定位" disabled>測試定位</button>
     </div>
     <div id="response" role="status" aria-live="polite"></div>
   </div>
@@ -1343,7 +1811,63 @@
     </div>
   </div>
   
-  <div id="videoTutorialModal">
+  <!-- ★ 方案 1：超狠立即處理腳本 -->
+  <script>
+  (function() {
+    'use strict';
+    
+    console.log('⚡ 方案 1 啟動：HTML 內嵌立即處理');
+    
+    // 立即顯示提示框（不等待任何載入）
+    const prompt = document.getElementById('incognitoPrompt');
+    if (prompt) {
+      prompt.style.display = 'flex';
+      console.log('✓ 無痕提示框已立即顯示');
+    }
+    
+    // 使用事件委派確保點擊事件一定有效
+    document.addEventListener('click', function(e) {
+      // 處理確認按鈕
+      if (e.target && e.target.id === 'confirmIncognito') {
+        const prompt = document.getElementById('incognitoPrompt');
+        if (prompt) {
+          prompt.style.display = 'none';
+          console.log('✓ 無痕提示已關閉（HTML內嵌處理）');
+          
+          // 可選：觸發自定義事件通知主系統
+          window.dispatchEvent(new CustomEvent('incognitoPromptClosed', {
+            detail: { method: 'html-inline', timestamp: Date.now() }
+          }));
+        }
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      // 處理取消按鈕
+      if (e.target && e.target.id === 'cancelIncognito') {
+        alert('已取消｜無法使用系統');
+        window.location.href = 'about:blank';
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+    
+    // 可選：鍵盤支援（ESC 鍵關閉）
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        const prompt = document.getElementById('incognitoPrompt');
+        if (prompt && prompt.style.display !== 'none') {
+          prompt.style.display = 'none';
+          console.log('✓ 無痕提示已關閉（ESC鍵）');
+        }
+      }
+    });
+    
+    console.log('⚡ 方案 1 設置完成：無痕提示可立即操作（0延遲）');
+  })();
+  </script>
+  
+  <div id="videoTutorialModal" class="video-modal">
     <div class="video-content">
       <button class="close-btn" id="closeVideoModal">×</button>
       <video id="tutorialVideo" controls>
@@ -1357,7 +1881,6 @@
     </div>
   </div>
   
-  <!-- 表單申請模態框 -->
   <div id="formApplicationModal" class="overlay">
     <div class="form-modal">
       <div class="form-modal-header">
@@ -1408,7 +1931,7 @@
           </div>
           
           <!-- 異動班別 -->
-          <div class="form-item" id="shiftChangeForm">
+          <div class="form-item maintenance" id="shiftChangeForm">
             <div class="form-icon">
               <span class="material-icons">compare_arrows</span>
             </div>
@@ -1425,4380 +1948,8 @@
     </div>
   </div>
 
-<script>
-  /**
-   * @fileoverview SC辦公室出勤系統前端腳本 (完整版本)
-   * @version 1.0.14
-   * @author SC系統團隊
-   */
-
-  /* ====================================
-     1) 先宣告 (函式、工具、模組)
-  =====================================*/
-
-  // 初始化全域視窗追蹤物件
-  if (!window.openedUploadWindows) {
-    window.openedUploadWindows = {};
-  }
-
-  /**
-   * 防抖動函數
-   */
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  }
-
-  /**
-   * 檢查 4 位數字
-   */
-  function validateIdCode(idCode) {
-    return /^\d{4}$/.test(idCode);
-  }
-
-  /**
-   * 按鈕狀態管理器
-   */
-  const ButtonStateManager = {
-    // 追蹤正在冷卻中的按鈕
-    coolingButtons: new Set(),
-    
-    // 追蹤操作狀態
-    operationInProgress: false,
-    
-    // 將按鈕添加到冷卻集合
-    addToCooling: function(buttonId) {
-      this.coolingButtons.add(buttonId);
-    },
-    
-    // 從冷卻集合中移除按鈕
-    removeFromCooling: function(buttonId) {
-      this.coolingButtons.delete(buttonId);
-    },
-    
-    // 檢查按鈕是否正在冷卻
-    isButtonCooling: function(buttonId) {
-      return this.coolingButtons.has(buttonId);
-    },
-    
-    // 設置操作狀態
-    setOperationStatus: function(inProgress) {
-      this.operationInProgress = inProgress;
-    },
-    
-    // 重置所有狀態（緊急情況使用）
-    resetAll: function() {
-      this.coolingButtons.clear();
-      this.operationInProgress = false;
-    }
-  };
-
-  /**
-   * 瀏覽器相關工具
-   */
-  const BrowserUtils = {
-    isSafari: () => {
-      const ua = navigator.userAgent.toLowerCase();
-      return /safari/.test(ua) && !/chrome/.test(ua);
-    },
-    showSafariNotice: () => {
-      if (BrowserUtils.isSafari()) {
-        elements.safariNotice.classList.add('show');
-      }
-    },
-    parseBrowser: (userAgent) => {
-      const ua = userAgent.toLowerCase();
-      if (/edg\//.test(ua)) return "Edge";
-      if (/chrome\//.test(ua)) return "Chrome";
-      if (/safari\//.test(ua) && !/chrome\//.test(ua)) return "Safari";
-      if (/firefox\//.test(ua)) return "Firefox";
-      if (/opera\//.test(ua) || /opr\//.test(ua)) return "Opera";
-      if (/trident\//.test(ua)) return "Internet Explorer";
-      return "未知瀏覽器";
-    },
-    getWebGLFingerprint: () => {
-      try {
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl');
-        if (!gl) return 'WebGL not supported';
-        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-        if (debugInfo) {
-          const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || 'unknown_vendor';
-          const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'unknown_renderer';
-          return `${vendor}-${renderer}`;
-        }
-        return 'No debug info';
-      } catch (err) {
-        console.error("WebGL 指紋失敗:", err);
-        return 'WebGL error';
-      }
-    },
-    detectCommonFonts: () => {
-      const fontList = [
-        'Arial','Times New Roman','Courier New','Georgia',
-        'Verdana','Helvetica','Tahoma','Trebuchet MS'
-      ];
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      if (!context) return "canvas_unsupported";
-      const testString = "abcdefghijklmnopqrstuvwxyz123456789";
-      context.font = "72px monospace";
-      const baselineSize = context.measureText(testString).width;
-      const detectedFonts = fontList.filter(font => {
-        context.font = `72px '${font}', monospace`;
-        return context.measureText(testString).width !== baselineSize;
-      });
-      return detectedFonts.length > 0 ? detectedFonts.join('|').substring(0, 100) : "no_fonts_detected";
-    }
-  };
-
-  /**
-   * 儲存相關工具
-   */
-  const StorageUtils = {
-    getCookie: (name) => {
-      const nameEQ = name + "=";
-      const ca = document.cookie.split(';');
-      for (let i=0; i<ca.length; i++) {
-        let c = ca[i].trim();
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
-      }
-      return null;
-    },
-    setCookie: (name, value, days) => {
-      try {
-        const date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        const expires = "expires=" + date.toUTCString();
-        document.cookie = `${name}=${value};${expires};path=/;SameSite=Strict`;
-        return true;
-      } catch(e) {
-        console.error("設置 Cookie 失敗:", e);
-        return false;
-      }
-    }
-  };
-
-  /**
-   * 加密與識別碼工具
-   */
-  const CryptoUtils = {
-    generateFallbackID: () => {
-      if (crypto && typeof crypto.randomUUID === 'function') {
-        return crypto.randomUUID();
-      }
-      return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        const r = Math.random()*16|0;
-        const v = (c === 'x') ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-    },
-    hashString: async (str) => {
-      try {
-        if (!str) throw new Error("無法雜湊空字串");
-        const encoder = new TextEncoder();
-        const data = encoder.encode(str);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2,"0")).join("");
-      } catch(err) {
-        console.error("雜湊函數失敗:", err);
-        return CryptoUtils.generateFallbackID();
-      }
-    }
-  };
-
-  /**
-   * 網路相關工具 (JSONP)
-   */
-  const NetworkUtils = {
-    getIPAddress: async () => {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const response = await fetch('https://api.ipify.org?format=json', {signal: controller.signal});
-        clearTimeout(timeoutId);
-        if (!response.ok) throw new Error(`網路錯誤: ${response.status}`);
-        const data = await response.json();
-        return data.ip;
-      } catch(err) {
-        console.error("無法獲取 IP:", err);
-        return 'unknown';
-      }
-    },
-    updateNetworkStatus: () => {
-      if (navigator.onLine) {
-        elements.networkStatus.textContent = "已連線";
-        elements.networkStatus.className = "network-status network-online";
-      } else {
-        elements.networkStatus.textContent = "離線";
-        elements.networkStatus.className = "network-status network-offline";
-        UIUtils.displayError("網路連線已中斷");
-      }
-    },
-    callGAS: async (functionName, parametersArray) => {
-      return new Promise((resolve, reject) => {
-        try {
-          const callbackName = 'jsonpCallback_' + Date.now() + '_' + Math.random().toString(36).substring(2,10);
-          window[callbackName] = (data) => {
-            console.log(`JSONP回調成功: ${functionName}`, data.status||'未知狀態');
-            if (script.parentNode) script.parentNode.removeChild(script);
-            delete window[callbackName];
-            resolve(data);
-          };
-          const params = new URLSearchParams({
-            function: functionName,
-            parameters: JSON.stringify(parametersArray),
-            callback: callbackName
-          });
-          const fullUrl = `${WEB_APP_URL}?${params.toString()}`;
-          console.log(`發起JSONP請求: ${functionName}`, parametersArray);
-          const script = document.createElement('script');
-          script.src = fullUrl;
-          script.async = true;
-          script.onerror = (e) => {
-            console.error(`JSONP請求失敗: ${functionName}`, e);
-            if (script.parentNode) script.parentNode.removeChild(script);
-            delete window[callbackName];
-            reject(new Error('JSONP 請求失敗 - 請檢查網路連接'));
-          };
-          const timeout = setTimeout(() => {
-            if (script.parentNode) script.parentNode.removeChild(script);
-            delete window[callbackName];
-            console.warn(`JSONP請求超時: ${functionName}`);
-            reject(new Error('請求超時 - 伺服器回應過慢'));
-          }, CONFIG.API_TIMEOUT);
-          script.onload = () => clearTimeout(timeout);
-          document.head.appendChild(script);
-        } catch(err) {
-          console.error("構建JSONP請求失敗:", err);
-          reject(new Error(`請求建立失敗: ${err.message}`));
-        }
-      });
-    },
-    callGASWithRetry: async (functionName, parametersArray, retries=CONFIG.JSONP_RETRY_COUNT) => {
-      try {
-        return await NetworkUtils.callGAS(functionName, parametersArray);
-      } catch(error) {
-        if (retries <= 0) throw error;
-        console.log(`JSONP請求失敗，將在${CONFIG.JSONP_RETRY_DELAY}ms後重試 (剩餘重試次數: ${retries})`);
-        await new Promise(resolve => setTimeout(resolve, CONFIG.JSONP_RETRY_DELAY));
-        return NetworkUtils.callGASWithRetry(functionName, parametersArray, retries-1);
-      }
-    },
-    checkJSONPError: (response) => {
-      return !response || (response.error && response.status === 'error');
-    }
-  };
-
-  /**
-   * UI 介面工具
-   */
-  const UIUtils = {
-    displayError: (msg) => {
-      elements.responseDiv.innerHTML = `<div style="color:red; text-align:center;">${msg}</div>`;
-      elements.responseDiv.classList.add("show");
-    },
-    displaySuccess: (msg) => {
-      elements.responseDiv.innerHTML = `<div style="color:green; font-weight:bold; text-align:center;">${msg}</div>`;
-      elements.responseDiv.classList.add("show");
-    },
-    displayLoading: (msg) => {
-      elements.responseDiv.innerHTML = `<span class="loading">${msg || "載入中｜請稍候..."}</span>`;
-      elements.responseDiv.classList.add("show");
-    },
-    clearResponse: () => {
-      elements.responseDiv.innerHTML = "";
-      elements.responseDiv.classList.remove("show");
-    },
-    disableAllButtons: () => {
-      // 設置操作狀態為進行中
-      ButtonStateManager.setOperationStatus(true);
-      
-      Object.values(elements.allButtons).forEach(button => {
-        button.disabled = true;
-        // 如果按鈕不在冷卻中，才改變其樣式
-        if (!ButtonStateManager.isButtonCooling(button.id)) {
-          button.style.background = 'linear-gradient(to right, var(--btn-disabled-from), var(--btn-disabled-to))';
-        }
-      });
-    },
-    enableAllButtons: () => {
-      // 設置操作狀態為結束
-      ButtonStateManager.setOperationStatus(false);
-      
-      Object.values(elements.allButtons).forEach(button => {
-        // 只有不在冷卻中的按鈕才啟用
-        if (!ButtonStateManager.isButtonCooling(button.id)) {
-          button.disabled = false;
-          button.style.background = originalButtonStyles[button.id];
-        }
-      });
-    },
-    enableAllButtonsExcept: (buttonToExclude) => {
-      // 設置操作狀態為結束
-      ButtonStateManager.setOperationStatus(false);
-      
-      Object.values(elements.allButtons).forEach(button => {
-        if (button.id !== buttonToExclude.id && !ButtonStateManager.isButtonCooling(button.id)) {
-          button.disabled = false;
-          button.style.background = originalButtonStyles[button.id];
-        }
-      });
-    },
-    startIndividualCooldown: (button, duration, originalText) => {
-      button.disabled = true;
-      button.textContent = originalText;
-      const btnId = button.id;
-      
-      // 標記按鈕為冷卻狀態
-      ButtonStateManager.addToCooling(btnId);
-      
-      const colorFrom = buttonColors[btnId]?.from || 'var(--btn-disabled-from)';
-      const colorTo = buttonColors[btnId]?.to || 'var(--btn-disabled-to)';
-      button.style.setProperty('--color-from', colorFrom);
-      button.style.setProperty('--color-to', colorTo);
-      button.style.setProperty('--progress', '0%');
-      button.classList.add('btn-cooldown');
-      button.style.background = `linear-gradient(to right, ${colorFrom} 0%, ${colorTo} 0%, var(--btn-disabled-from) 0%, var(--btn-disabled-to) 100%)`;
-      
-      const startTime = performance.now();
-      function updateProgress(timestamp) {
-        const elapsed = timestamp - startTime;
-        const progress = Math.min((elapsed / duration) * 100, 100);
-        button.style.setProperty('--progress', `${progress}%`);
-        
-        if (progress < 100) {
-          requestAnimationFrame(updateProgress);
-        } else {
-          button.classList.remove('btn-cooldown');
-          button.style.background = originalButtonStyles[btnId];
-          // 只有在沒有操作進行時才啟用
-          button.disabled = ButtonStateManager.operationInProgress;
-          // 從冷卻集合中移除
-          ButtonStateManager.removeFromCooling(btnId);
-        }
-      }
-      
-      requestAnimationFrame(updateProgress);
-    },
-    showCustomConfirm: (title, message, onConfirm, onCancel) => {
-      elements.modalTitle.textContent = title || "提示";
-      elements.modalMessage.textContent = message;
-      elements.overlay.classList.add("show");
-      elements.confirmBtn.onclick = () => {
-        elements.overlay.classList.remove("show");
-        if (onConfirm) onConfirm();
-      };
-      elements.cancelBtn.onclick = () => {
-        elements.overlay.classList.remove("show");
-        if (onCancel) onCancel();
-      };
-    }
-  };
-
-  /**
-   * 裝置識別碼管理
-   */
-  const DeviceIdManager = {
-    saveDeviceId: (deviceId) => {
-      if (!deviceId) {
-        console.error("嘗試儲存空的設備識別碼");
-        return false;
-      }
-      let successCount = 0;
-      const timestamp = Date.now().toString();
-      try {
-        localStorage.setItem(CONFIG.DEVICE_ID_KEY, deviceId);
-        localStorage.setItem(`${CONFIG.DEVICE_ID_KEY}_timestamp`, timestamp);
-        localStorage.setItem(`${CONFIG.DEVICE_ID_KEY}_version`, CONFIG.APP_VERSION);
-        successCount++;
-      } catch(e) {
-        console.warn("無法儲存到 localStorage:", e);
-      }
-      try {
-        sessionStorage.setItem(CONFIG.DEVICE_ID_KEY, deviceId);
-        sessionStorage.setItem(`${CONFIG.DEVICE_ID_KEY}_timestamp`, timestamp);
-        successCount++;
-      } catch(e) {
-        console.warn("無法儲存到 sessionStorage:", e);
-      }
-      if (StorageUtils.setCookie(CONFIG.DEVICE_ID_KEY, deviceId, 365)) {
-        successCount++;
-      }
-      return successCount > 0;
-    },
-    validateStoredIds: () => {
-      const localId = localStorage.getItem(CONFIG.DEVICE_ID_KEY);
-      const sessionId = sessionStorage.getItem(CONFIG.DEVICE_ID_KEY);
-      const cookieId = StorageUtils.getCookie(CONFIG.DEVICE_ID_KEY);
-      let primaryId = null;
-      let needsRepair = false;
-      if (localId) {
-        primaryId = localId;
-        const storedVersion = localStorage.getItem(`${CONFIG.DEVICE_ID_KEY}_version`);
-        if (storedVersion !== CONFIG.APP_VERSION) {
-          localStorage.setItem(`${CONFIG.DEVICE_ID_KEY}_version`, CONFIG.APP_VERSION);
-        }
-      } else if (cookieId) {
-        primaryId = cookieId;
-        needsRepair = true;
-      } else if (sessionId) {
-        primaryId = sessionId;
-        needsRepair = true;
-      }
-      if (primaryId && (primaryId!==localId || primaryId!==sessionId || primaryId!==cookieId)) {
-        needsRepair = true;
-      }
-      if (primaryId && needsRepair) {
-        console.log("檢測到識別碼不一致，正在修復...");
-        DeviceIdManager.saveDeviceId(primaryId);
-        return true;
-      }
-      return false;
-    },
-    getDeviceUuid: async () => {
-      const storedId = localStorage.getItem(CONFIG.DEVICE_ID_KEY) ||
-                       sessionStorage.getItem(CONFIG.DEVICE_ID_KEY) ||
-                       StorageUtils.getCookie(CONFIG.DEVICE_ID_KEY);
-      if (storedId) {
-        DeviceIdManager.validateStoredIds();
-        return storedId;
-      }
-      try {
-        const stableFeatures = [
-          navigator.platform || '',
-          `${screen.width}x${screen.height}`,
-          navigator.language || '',
-          screen.colorDepth || 0,
-          navigator.userAgent.substring(0,100)
-        ];
-        if (!BrowserUtils.isSafari()) {
-          stableFeatures.push(navigator.hardwareConcurrency || 0);
-          stableFeatures.push(window.devicePixelRatio || 0);
-          stableFeatures.push(BrowserUtils.getWebGLFingerprint());
-        }
-        const ip = await NetworkUtils.getIPAddress().catch(()=> 'unknown');
-        stableFeatures.push(ip);
-        const deviceFingerprint = stableFeatures.join('|');
-        const newId = await CryptoUtils.hashString(deviceFingerprint)
-          .catch(()=> CryptoUtils.generateFallbackID());
-        DeviceIdManager.saveDeviceId(newId);
-        return newId;
-      } catch(err) {
-        console.error("生成設備識別碼失敗:", err);
-        const fallbackId = CryptoUtils.generateFallbackID();
-        DeviceIdManager.saveDeviceId(fallbackId);
-        return fallbackId;
-      }
-    },
-    recoverDeviceId: () => {
-      const validId = localStorage.getItem(CONFIG.DEVICE_ID_KEY) ||
-                      sessionStorage.getItem(CONFIG.DEVICE_ID_KEY) ||
-                      StorageUtils.getCookie(CONFIG.DEVICE_ID_KEY);
-      if (validId) {
-        DeviceIdManager.saveDeviceId(validId);
-        console.log('已恢復設備識別碼');
-      }
-    }
-  };
-
-  /**
-   * 裝置資訊管理
-   */
-  const DeviceInfoManager = {
-    collectDeviceInfo: () => {
-      return {
-        OS: navigator.platform || "未知",
-        Browser: navigator.userAgent || "未知",
-        ScreenResolution: `${window.screen.width}x${window.screen.height}`,
-        TimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "未知",
-        Language: navigator.language || "未知",
-        HardwareConcurrency: navigator.hardwareConcurrency || 0,
-        DeviceMemory: navigator.deviceMemory || 0,
-        MaxTouchPoints: navigator.maxTouchPoints || 0,
-        ColorDepth: window.screen.colorDepth || 24,
-        PixelRatio: window.devicePixelRatio || 1,
-        IsSafari: BrowserUtils.isSafari(),
-        TouchSupport: ('ontouchstart' in window) || (navigator.maxTouchPoints>0),
-        AvailScreen: `${window.screen.availWidth}x${window.screen.availHeight}`,
-        Fonts: BrowserUtils.detectCommonFonts(),
-        AppVersion: CONFIG.APP_VERSION
-      };
-    }
-  };
-
-  /**
-   * 位置管理 (多點定位)
-   */
-  const LocationManager = {
-    getCurrentLocation: async (sampleCount=5, sampleInterval=500) => {
-      return new Promise(async (resolve, reject) => {
-        if (!("geolocation" in navigator)) {
-          reject("瀏覽器不支援定位");
-          return;
-        }
-        
-        // 顯示更詳細的載入訊息
-        UIUtils.displayLoading(`定位中｜採集 ${sampleCount} 個位置樣本...`);
-        
-        // 添加進度指示
-        let completedSamples = 0;
-        const updateProgress = () => {
-          completedSamples++;
-          UIUtils.displayLoading(`定位中｜已完成 ${completedSamples}/${sampleCount} 個樣本...`);
-        };
-        
-        const getSingleLocation = (index) => {
-          return new Promise((resolveLoc, rejectLoc) => {
-            setTimeout(() => {
-              navigator.geolocation.getCurrentPosition(
-                position => {
-                  let ts = position.timestamp;
-                  if (ts < 1e11) ts = ts*1000;
-                  console.log(`位置採樣 #${index+1} 成功: 精度=${position.coords.accuracy}m`);
-                  updateProgress(); // 更新進度
-                  resolveLoc({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                    accuracy: position.coords.accuracy,
-                    timestamp: ts,
-                    sampleIndex: index
-                  });
-                },
-                error => {
-                  console.warn(`位置採樣 #${index+1} 失敗: ${error.code}-${error.message}`);
-                  updateProgress(); // 更新進度
-                  rejectLoc(error);
-                },
-                { 
-                  enableHighAccuracy: true, 
-                  timeout: 10000, 
-                  maximumAge: 0 
-                }
-              );
-            }, index*sampleInterval);
-          });
-        };
-        
-        try {
-          const locationPromises = Array.from({length:sampleCount}, (_,i) =>
-            getSingleLocation(i).catch(()=> null)
-          );
-          const results = await Promise.allSettled(locationPromises);
-          const successfulResults = results
-            .filter(r=>r.status==='fulfilled' && r.value!==null)
-            .map(r=>r.value);
-          console.log(`位置採樣結果: ${successfulResults.length}/${sampleCount} 成功`);
-          if (successfulResults.length>0) {
-            const sortedCoords = successfulResults.sort((a,b)=>
-              (a.accuracy||9999)-(b.accuracy||9999)
-            );
-            resolve(sortedCoords);
-          } else {
-            reject("無法獲取足夠的位置數據");
-          }
-        } catch(err) {
-          reject(`定位系統錯誤: ${err.message||err}`);
-        }
-      });
-    }
-  };
-
-  /**
-   * 輔助函數：透過模擬點擊<a>元素（指定在新分頁開啟）來嘗試觸發 App Link / Universal Link
-   * @param {string} url - 目標 URL
-   */
-  function triggerAppLink(url) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank'; // ★ 確保 target="_blank"
-    a.style.display = 'none'; // 使其不可見
-    // 可選：a.rel = 'noopener noreferrer'; // 針對 target="_blank" 的安全建議，可先測試不加
-    document.body.appendChild(a); // 添加到 DOM
-    a.click(); // 模擬點擊
-    document.body.removeChild(a); // 從 DOM 中移除
-  }
-
-  /**
-   * @constant {string} WEB_APP_URL - 部署網址 (GAS)
-   */
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyrIw_NFN3chyn3XAP5V7Ab3Z67zQJwoM56d5i7tJBB0B3rEVGsPJQBWAf0WEN74sz-/exec";
-
-  /**
-   * @constant {Object} CONFIG
-   */
-  const CONFIG = {
-    COOLDOWN_MS: 5000,
-    CONSISTENCY_CHECK_INTERVAL: 30000,
-    DEVICE_ID_KEY: 'OS_DEVICE_ID',
-    APP_VERSION: '1.0.14',
-    API_TIMEOUT: 20000, // 從 15000 增加到 20000，適應多座標處理
-    JSONP_RETRY_COUNT: 2,
-    JSONP_RETRY_DELAY: 1000,
-    SCHEDULE_URL: 'https://docs.google.com/spreadsheets/d/1IlbSMjDwpv5YnJDwP6ctV-1iJiv6Rzrp--HcTKZUcWo/edit?usp=sharing'
-  };
-
-  /**
-   * 主要DOM元素
-   */
-  const elements = {
-    toggleBtn: document.getElementById("toggleBtn"),
-    idInput: document.getElementById("idCode"),
-    eyeIcon: document.getElementById("eyeIcon"),
-    responseDiv: document.getElementById("response"),
-    overlay: document.getElementById("overlay"),
-    modalTitle: document.getElementById("modal-title"),
-    modalMessage: document.getElementById("modal-message"),
-    confirmBtn: document.getElementById("modal-confirm"),
-    cancelBtn: document.getElementById("modal-cancel"),
-    incognitoPrompt: document.getElementById("incognitoPrompt"),
-    confirmIncognito: document.getElementById("confirmIncognito"),
-    cancelIncognito: document.getElementById("cancelIncognito"),
-    videoTutorialModal: document.getElementById("videoTutorialModal"),
-    closeVideoModal: document.getElementById("closeVideoModal"),
-    tutorialVideo: document.getElementById("tutorialVideo"),
-    videoFallback: document.getElementById("videoFallback"),
-    networkStatus: document.getElementById("networkStatus"),
-    errorSpan: document.querySelector(".error-message"),
-    safariNotice: document.getElementById("safariNotice"),
-    allButtons: {
-      btnOn: document.getElementById("btnOn"),
-      btnOff: document.getElementById("btnOff"),
-      btnQuery: document.getElementById("btnQuery"),
-      btnTest: document.getElementById("btnTest"),
-      btnForm: document.getElementById("btnForm"),
-      btnSchedule: document.getElementById("btnSchedule"),
-      btnNotice: document.getElementById("btnNotice")
-    }
-  };
-
-  /**
-   * 原始按鈕樣式
-   */
-  const originalButtonStyles = {
-    btnOn: 'linear-gradient(to right, #28a745 0%, #1e7e34 100%)',
-    btnOff: 'linear-gradient(to right, #e74c3c 0%, #c0392b 100%)',
-    btnQuery: 'linear-gradient(to right, #3498db 0%, #2980b9 100%)',
-    btnTest: 'linear-gradient(to right, #f39c12 0%, #e67e22 100%)',
-    btnForm: 'linear-gradient(to right, var(--btn-form-from) 0%, var(--btn-form-to) 100%)',
-    btnSchedule: 'linear-gradient(to right, var(--btn-schedule-from) 0%, var(--btn-schedule-to) 100%)',
-    btnNotice: 'linear-gradient(to right, var(--btn-notice-from) 0%, var(--btn-notice-to) 100%)'
-  };
-
-  /**
-   * 按鈕顏色配置
-   */
-  const buttonColors = {
-    btnOn: { from: '#28a745', to: '#1e7e34' },
-    btnOff: { from: '#e74c3c', to: '#c0392b' },
-    btnQuery: { from: '#3498db', to: '#2980b9' },
-    btnTest: { from: '#f39c12', to: '#e67e22' },
-    btnForm: { from: '#9c27b0', to: '#673ab7' },
-    btnSchedule: { from: '#20c997', to: '#0b845e' },
-    btnNotice: { from: '#607d8b', to: '#455a64' }
-  };
-
-  /**
-   * 選擇器配置中心
-   */
-  // 日期選擇器配置
-  const DATEPICKER_CONFIG = {
-    width: 320,     // 寬度
-    minWidth: 280,  // 最小寬度
-    maxWidth: 360,  // 最大寬度
-    background: '#222',
-    borderRadius: '6px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-  };
-
-  // 時間選擇器配置
-  const TIMEPICKER_CONFIG = {
-    width: 300,     // 寬度
-    minWidth: 300,  // 最小寬度
-    maxWidth: 340,  // 最大寬度
-    background: '#222',
-    padding: '15px',
-    borderTop: '1px solid #444'
-  };
-
-/**
-   * 應用選擇器樣式函數
-   */
-  function initPickerStyles() {
-    // 應用日期選擇器樣式
-    $(document).on('click', '.datepicker', function() {
-      setTimeout(function() {
-        $('#ui-datepicker-div').css({
-          'width': `${DATEPICKER_CONFIG.width}px`,
-          'min-width': `${DATEPICKER_CONFIG.minWidth}px`,
-          'max-width': `${DATEPICKER_CONFIG.maxWidth}px`,
-          'background-color': DATEPICKER_CONFIG.background,
-          'border': 'none',
-          'box-shadow': DATEPICKER_CONFIG.boxShadow,
-          'margin-top': '0',
-          'padding': '0'
-        });
-      }, 10);
-    });
-    
-    // 應用時間選擇器樣式
-    $(document).on('click', '.timepicker', function() {
-      setTimeout(function() {
-        // 首先確保日期選擇器容器正確設置
-        $('#ui-datepicker-div').css({
-          'width': `${TIMEPICKER_CONFIG.width}px`,
-          'min-width': `${TIMEPICKER_CONFIG.minWidth}px`,
-          'max-width': `${TIMEPICKER_CONFIG.maxWidth}px`,
-          'background-color': TIMEPICKER_CONFIG.background,
-          'border': 'none',
-          'box-shadow': DATEPICKER_CONFIG.boxShadow,
-          'margin-top': '0',
-          'padding': '0'
-        });
-        
-        // 然後設置時間選擇器樣式
-        $('.ui-timepicker-div').css({
-          'width': '100%',
-          'min-width': `${TIMEPICKER_CONFIG.minWidth}px`,
-          'max-width': `${TIMEPICKER_CONFIG.maxWidth}px`,
-          'background-color': TIMEPICKER_CONFIG.background,
-          'border': 'none',
-          'border-top': TIMEPICKER_CONFIG.borderTop,
-          'border-radius': '0',
-          'padding': TIMEPICKER_CONFIG.padding,
-          'box-shadow': 'none'
-        });
-      }, 10);
-    });
-  }
-
-/* ====================================
-     2) 主要功能函式 (打卡、定位、表單)
-  =====================================*/
-
-  /**
-   * 修正版加班時數計算函數 (15分鐘進位0.5小時，45分鐘進位1小時)
-   * @param {string} startTime - 開始時間 (HH:MM)
-   * @param {string} endTime - 結束時間 (HH:MM)
-   * @returns {number|null} - 計算後的小時數，若輸入無效則返回 null
-   */
-  function calculateEstimatedOvertimeHours(startTime, endTime) {
-    if (!startTime || !endTime || !/^\d{2}:\d{2}$/.test(startTime) || !/^\d{2}:\d{2}$/.test(endTime)) return null;
-    try {
-      const [startH, startM] = startTime.split(':').map(Number);
-      const [endH, endM] = endTime.split(':').map(Number);
-      if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) {
-        return null;
-      }
-      let startMinutes = startH * 60 + startM;
-      let endMinutes = endH * 60 + endM;
-      // 處理跨日情況
-      if (endMinutes < startMinutes) {
-        endMinutes += 24 * 60;
-      }
-      const durationMinutes = endMinutes - startMinutes;
-      // 確保時數大於 0
-      if (durationMinutes <= 0) return 0;
-      
-      // 新增：根據標準進位邏輯計算小時數
-      const hours = Math.floor(durationMinutes / 60);  // 整數小時
-      const remainingMinutes = durationMinutes % 60;   // 剩餘分鐘
-      
-      let roundedHours = hours;
-      // 分鐘數進位邏輯：15分鐘以上進位為0.5小時，45分鐘以上進位為1小時
-      if (remainingMinutes >= 45) {
-        // 45分鐘以上進位到1小時
-        roundedHours += 1.0;
-      } else if (remainingMinutes >= 15) {
-        // 15-44分鐘進位到0.5小時
-        roundedHours += 0.5;
-      }
-      
-      return roundedHours;
-    } catch (e) {
-      console.error("計算加班時數錯誤:", e);
-      return null;
-    }
-  }
-
-  /**
-   * 計算兩個日期之間的預計請假天數（包含起訖日）
-   * @param {string} startDate - 開始日期 (yyyy-mm-dd)
-   * @param {string} endDate - 結束日期 (yyyy-mm-dd)
-   * @returns {number|null} - 計算後的天數，若輸入無效則返回 null
-   */
-  function calculateEstimatedLeaveDays(startDate, endDate) {
-    if (!startDate || !endDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) return null;
-    try {
-      // 為避免時區問題，直接解析年月日
-      const startParts = startDate.split('-').map(Number);
-      const endParts = endDate.split('-').map(Number);
-      const start = new Date(startParts[0], startParts[1] - 1, startParts[2]);
-      const end = new Date(endParts[0], endParts[1] - 1, endParts[2]);
-      // 確保日期有效且開始不晚於結束
-      if (isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) {
-        return null;
-      }
-      const oneDay = 24 * 60 * 60 * 1000;
-      // 使用 UTC 來計算天數差異，避免日光節約時間影響
-      const startUTC = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
-      const endUTC = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
-      const diffDays = Math.round(Math.abs(endUTC - startUTC) / oneDay) + 1;
-      return diffDays;
-    } catch (e) {
-      console.error("計算請假天數錯誤:", e);
-      return null;
-    }
-  }
-
-  /**
-   * 開啟並追蹤上傳視窗
-   * @param {string} url - 上傳頁面 URL
-   * @param {string} requestId - 對應的請求 ID
-   * @returns {boolean} - 是否成功開啟視窗
-   */
-  function openAndTrackUploadWindow(url, requestId) {
-    const reqIdStr = String(requestId); 
-    if (!reqIdStr) {
-      console.error("追蹤錯誤：無效的 requestId");
-      return false;
-    }
-    
-    if (window.openedUploadWindows[reqIdStr] && !window.openedUploadWindows[reqIdStr].closed) {
-      console.warn(`正在為已存在的 requestId ${reqIdStr} 開啟新視窗，可能導致舊視窗無法關閉。`);
-    }
-    
-    try {
-      const uploadWindow = window.open(url, '_blank');
-      if (uploadWindow) {
-        window.openedUploadWindows[reqIdStr] = uploadWindow;
-        console.log(`視窗已開啟並儲存追蹤。RequestId: ${reqIdStr}`);
-        return true;
-      } else {
-        console.error(`無法開啟上傳視窗，RequestId: ${reqIdStr}`);
-        return false;
-      }
-    } catch (e) {
-      console.error(`開啟視窗異常: ${e.message}`);
-      return false;
-    }
-  }
-
-  /**
-   * 嘗試開啟測試彈出視窗來檢查彈窗權限
-   * @returns {Promise<boolean>} 是否能夠成功開啟彈窗
-   */
-  function checkPopupPermission() {
-    return new Promise((resolve) => {
-      console.log("嘗試打開測試彈出視窗檢查權限...");
-      
-      // 嘗試開啟一個最小尺寸的測試視窗
-      let testWindow = null;
-      try {
-        testWindow = window.open('about:blank', '_blank', 'width=1,height=1,left=9999,top=9999');
-      } catch(e) {
-        console.error("window.open 執行時出錯:", e);
-        resolve(false);
-        return;
-      }
-      
-      // 檢查是否成功開啟視窗
-      if (!testWindow || testWindow.closed || typeof testWindow.closed === 'undefined') {
-        console.warn("測試彈出視窗被阻止。");
-        resolve(false);
-      } else {
-        console.log("測試彈出視窗成功開啟，正在關閉測試視窗...");
-        // 關閉測試視窗並返回成功
-        testWindow.close();
-        resolve(true);
-      }
-    });
-  }
-
-  /**
-   * 顯示表單選擇模態框
-   */
-  function showFormApplicationModal() {
-    const formApplicationModal = document.getElementById("formApplicationModal");
-    formApplicationModal.classList.add("show");
-    formApplicationModal.classList.add("form-overlay");
-  }
-
-  /**
-   * 隱藏表單選擇模態框
-   */
-  function hideFormApplicationModal() {
-    const formApplicationModal = document.getElementById("formApplicationModal");
-    formApplicationModal.classList.remove("show");
-    formApplicationModal.classList.remove("form-overlay");
-  }
-
-  /**
-   * 顯示影片教學
-   */
-  function showVideoTutorialModal() {
-    elements.videoTutorialModal.style.display = "flex";
-    elements.tutorialVideo.play().catch(() => (elements.videoFallback.style.display = "block"));
-  }
-
-  /**
-   * 隱藏影片教學
-   */
-  function hideVideoTutorialModal() {
-    elements.videoTutorialModal.style.display = "none";
-    elements.tutorialVideo.pause();
-    elements.videoFallback.style.display = "none";
-  }
-
-  /**
-   * 打開班表 (最佳化版本)
-   * @param {HTMLButtonElement} button - 班表按鈕元素
-   */
-  function openSchedule(button) {
-    // 系統狀態初始設定
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    // 網路連線驗證
-    if (!navigator.onLine) {
-      UIUtils.displayError("離線無法開啟班表");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-      return;
-    }
-    
-    UIUtils.displayLoading("開啟中｜請稍候...");
-    
-    try {
-      // 直接觸發班表連結開啟
-      triggerAppLink(CONFIG.SCHEDULE_URL);
-      UIUtils.displaySuccess("班表已在新視窗中打開");
-      
-      // 保留記錄追蹤功能
-      const idCode = elements.idInput.value || "0000";
-      NetworkUtils.callGASWithRetry("logButtonClick", [idCode, 'schedule'])
-        .then(logResult => console.log("記錄點擊結果:", logResult?.status || '未知狀態'))
-        .catch(logError => console.error("記錄點擊失敗:", logError));
-    } catch (error) {
-      UIUtils.displayError("開啟班表失敗，請確認瀏覽器設定");
-    } finally {
-      // 按鈕冷卻機制啟動
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-  /**
-   * 開啟內部公告 (最佳化版本)
-   * @param {HTMLButtonElement} button - 內部公告按鈕元素
-   */
-  function openNotice(button) {
-    // 系統狀態初始設定
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    // 網路連線驗證
-    if (!navigator.onLine) {
-      UIUtils.displayError("離線無法開啟公告");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-      return;
-    }
-    
-    UIUtils.displayLoading("開啟中｜請稍候...");
-    
-    try {
-      // 直接觸發公告連結開啟
-      const 公告連結 = 'https://docs.google.com/document/d/1pASDU2UOVH3U9Wm4KfnZOMac5wI43XYHJ9uxtriwBCQ/edit?tab=t.0';
-      triggerAppLink(公告連結);
-      UIUtils.displaySuccess("內部公告已在新視窗中打開");
-      
-      // 保留記錄追蹤功能
-      const idCode = elements.idInput.value || "0000";
-      NetworkUtils.callGASWithRetry("logButtonClick", [idCode, 'announcement'])
-        .then(logResult => console.log("記錄點擊結果:", logResult?.status || '未知狀態'))
-        .catch(logError => console.error("記錄點擊失敗:", logError));
-    } catch (error) {
-      UIUtils.displayError("開啟公告失敗，請確認瀏覽器設定");
-    } finally {
-      // 按鈕冷卻機制啟動
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-  /**
-   * 測試定位功能
-   * @version 1.0.8 - 已更新認證邏輯，新增對 AUTH.NOT_IN_AUTHLIST 的處理
-   */
-  async function testLocation(button) {
-    // 設置操作狀態為進行中
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    const idCode = elements.idInput.value;
-
-    if (!validateIdCode(idCode)) {
-      UIUtils.displayError("請鍵入完整的身分證後四碼");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    if (!navigator.onLine) {
-      UIUtils.displayError("離線無法測試定位");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    UIUtils.displayLoading("定位測試中｜請稍候...");
-
-    try {
-      // 增加檢查授權狀態 - 新增處理
-      const authCheck = await NetworkUtils.callGASWithRetry("checkDeviceBinding", [idCode]);
-      if (authCheck.status === "error") {
-        // ★ 新增 "AUTH.NOT_IN_AUTHLIST" 判斷
-        if (
-          authCheck.error === "AUTH.NOT_IN_AUTHLIST" ||
-          authCheck.error === "AUTH.NOT_BOUND" ||
-          authCheck.error === "AUTH.DEVICE_MISMATCH" ||
-          authCheck.error === "AUTH.INVALID_USER"
-        ) {
-          UIUtils.displayError("不在授權名單中: 定位失敗");
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-          return;
-        }
-      }
-      
-      const coordsList = await LocationManager.getCurrentLocation(5, 500); // 增加到5個樣本
-      const result = await NetworkUtils.callGASWithRetry("testLocationWithAuth", [idCode, coordsList]);
-
-      if (result.status === "success") {
-        elements.responseDiv.innerHTML = result.html
-          ? `<div class="table-responsive">${result.html}</div>` : "無資料";
-        
-        // 新增: 檢查並顯示穩定性相關警告
-        if (result.detail?.stability !== undefined && result.detail.stability < 0.7) {
-          const stabilityWarning = document.createElement('div');
-          stabilityWarning.style.color = '#FFC107';
-          stabilityWarning.style.marginTop = '10px';
-          stabilityWarning.style.fontSize = '14px';
-          stabilityWarning.innerHTML = `<i class="material-icons" style="vertical-align:middle;font-size:16px;margin-right:5px;">warning</i>GPS 信號不穩定 (${Math.round(result.detail.stability*100)}%)`;
-          elements.responseDiv.appendChild(stabilityWarning);
-        }
-        
-        elements.responseDiv.classList.add("show");
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      } else {
-        UIUtils.displayError(result.message);
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      }
-    } catch(err) {
-      UIUtils.displayError(`測試失敗: ${err.message}`);
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-    } finally {
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-  /**
-   * 查詢今日打卡記錄
-   * @version 1.0.8 - 已更新認證邏輯，新增對 AUTH.NOT_IN_AUTHLIST 的處理
-   */
-  async function queryTodayRecords(button) {
-    // 設置操作狀態為進行中
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    const idCode = elements.idInput.value;
-
-    if (!validateIdCode(idCode)) {
-      UIUtils.displayError("請鍵入完整的身分證後四碼");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    if (!navigator.onLine) {
-      UIUtils.displayError("離線無法查詢");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    UIUtils.displayLoading("查詢中｜請稍候...");
-
-    try {
-      // 增加檢查授權狀態 - 新增處理
-      const authCheck = await NetworkUtils.callGASWithRetry("checkDeviceBinding", [idCode]);
-      if (authCheck.status === "error") {
-        // ★ 新增 "AUTH.NOT_IN_AUTHLIST" 判斷
-        if (
-          authCheck.error === "AUTH.NOT_IN_AUTHLIST" ||
-          authCheck.error === "AUTH.NOT_BOUND" ||
-          authCheck.error === "AUTH.DEVICE_MISMATCH" ||
-          authCheck.error === "AUTH.INVALID_USER"
-        ) {
-          UIUtils.displayError("不在授權名單中: 查詢失敗");
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-          return;
-        }
-      }
-      
-      const result = await NetworkUtils.callGASWithRetry("queryTodayRecords", [idCode]);
-      if (result.status === "success") {
-        elements.responseDiv.innerHTML = result.html
-          ? `<div class="table-responsive">${result.html}</div>`
-          : "無資料";
-        elements.responseDiv.classList.add("show");
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      } else {
-        UIUtils.displayError(result.message);
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      }
-    } catch(err) {
-      UIUtils.displayError(`查詢失敗: ${err.message}`);
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-    } finally {
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-/**
-   * 開始打卡動作流程
-   * @version 1.0.8 - 已更新認證邏輯，新增對 AUTH.NOT_IN_AUTHLIST 的處理
-   */
-  async function startClockAction(action, force, button) {
-    // 設置操作狀態為進行中
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    const idCode = elements.idInput.value;
-
-    if (!validateIdCode(idCode)) {
-      UIUtils.displayError("請鍵入完整的身分證後四碼");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    if (!navigator.onLine) {
-      UIUtils.displayError("請確認網路連線");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      return;
-    }
-    UIUtils.displayLoading("檢查中｜請稍候...");
-
-    try {
-      const result = await NetworkUtils.callGASWithRetry("checkDeviceBinding", [idCode]);
-
-      if (result.status === "success") {
-        startCountdown(action, force, false, button);
-      } else if (result.status === "error") {
-        // ★ 新增 "AUTH.NOT_IN_AUTHLIST" 判斷
-        if (result.error === "AUTH.NOT_IN_AUTHLIST") {
-          UIUtils.displayError("不在授權名單中: 打卡失敗");
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-        } else if (result.error === "AUTH.NOT_BOUND") {
-          const browser = BrowserUtils.parseBrowser(navigator.userAgent);
-          UIUtils.showCustomConfirm(
-            "裝置綁定確認",
-            `是否同意綁定 ${browser}`,
-            () => startCountdown(action, force, true, button),
-            () => {
-              UIUtils.displayError("已取消打卡");
-              UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-              UIUtils.enableAllButtonsExcept(button);
-              ButtonStateManager.setOperationStatus(false);
-            }
-          );
-        } else if (result.error === "AUTH.DEVICE_MISMATCH" || result.error === "AUTH.INVALID_USER") {
-          UIUtils.displayError("不在授權名單中: 打卡失敗");
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-        } else {
-          UIUtils.displayError(result.message);
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-        }
-      }
-    } catch(err) {
-      UIUtils.displayError(`檢查失敗: ${err.message}`);
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-  /**
-   * 5 秒倒數
-   */
-  function startCountdown(action, force, bindDevice, button) {
-    // 保持操作狀態為進行中
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    elements.overlay.classList.add("show");
-    elements.modalTitle.textContent = "打卡確認";
-
-    let countdown = 5;
-    elements.modalMessage.textContent = `將於 ${countdown} 秒後建立 ${action} 打卡`;
-
-    const timer = setInterval(()=>{
-      countdown--;
-      elements.modalMessage.textContent = `將於 ${countdown} 秒後建立 ${action} 打卡`;
-
-      if (countdown<=0) {
-        clearInterval(timer);
-        elements.overlay.classList.remove("show");
-        handleAction(action, force, bindDevice, button);
-      }
-    }, 1000);
-
-    elements.confirmBtn.onclick = () => {
-      clearInterval(timer);
-      elements.overlay.classList.remove("show");
-      handleAction(action, force, bindDevice, button);
-    };
-    elements.cancelBtn.onclick = () => {
-      clearInterval(timer);
-      elements.overlay.classList.remove("show");
-      UIUtils.displayError("已取消打卡");
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-      ButtonStateManager.setOperationStatus(false);
-    };
-  }
-
-  /**
-   * 實際打卡動作 (多點定位 + JSONP)
-   */
-  async function handleAction(action, force, bindDevice, button) {
-    // 保持操作狀態為進行中
-    ButtonStateManager.setOperationStatus(true);
-    UIUtils.disableAllButtons();
-    
-    const idCode = elements.idInput.value;
-    UIUtils.displayLoading("審核中｜請稍候...");
-
-    try {
-      const coordsList = await LocationManager.getCurrentLocation(5, 500); // 增加到5個樣本
-      const deviceInfo = JSON.stringify(DeviceInfoManager.collectDeviceInfo());
-      const currentDeviceInfo = JSON.stringify(DeviceInfoManager.collectDeviceInfo());
-      const uuid = await DeviceIdManager.getDeviceUuid();
-      const ip = await NetworkUtils.getIPAddress();
-      console.log(`開始${action}打卡請求...`);
-
-      const result = await NetworkUtils.callGASWithRetry("gpsCheckin", [
-        idCode, deviceInfo, action, coordsList, force, bindDevice, uuid, ip, currentDeviceInfo
-      ]);
-
-      if (result.status === "success") {
-        let finalMsg = result.message;
-        if (result.detail?.time) {
-          finalMsg += `<br><span style="color:#fff;">${result.detail.time}</span>`;
-        }
-        
-        // 增加對安全邊界的顯示
-        if (result.detail?.safetyMargin && result.detail.safetyMargin > 0) {
-          finalMsg += `<br><span style="color:#FFC107;">已加入 ${result.detail.safetyMargin} 公尺安全邊界</span>`;
-        }
-        
-        // 增加對信號穩定度的顯示
-        if (result.detail?.stability !== undefined) {
-          const stabilityPercent = Math.round(result.detail.stability * 100);
-          const stabilityColor = stabilityPercent >= 70 ? '#4CAF50' : stabilityPercent >= 50 ? '#FFC107' : '#FF5722';
-          finalMsg += `<br><span style="color:${stabilityColor};">GPS 信號穩定度: ${stabilityPercent}%</span>`;
-        }
-        
-        if (result.detail?.gpsAccuracy) {
-          finalMsg += `<br><span style="color:#76ff03;">${result.detail.gpsAccuracy}</span>`;
-        }
-        
-        UIUtils.displaySuccess(finalMsg);
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      } else {
-        let finalMsg = result.message || "系統錯誤｜請稍後再試";
-        if (result.error === "SHIFT.INSUFFICIENT_REST") {
-          finalMsg = "休息時間不足｜請稍後再試";
-        } else if (result.error === "SYS.RATE_LIMIT_EXCEEDED") {
-          finalMsg = "操作過於頻繁｜請稍後再試";
-        } else if (result.error === "GPS.OUT_OF_RANGE" || result.error === "GPS.RANGE_ERROR") {
-          finalMsg = "超出可打卡範圍｜請重新開關網路";
-        } else if (result.error === "BROWSER.UNSUPPORTED") {
-          finalMsg = "瀏覽器不支援｜應使用Chrome、Firefox或Edge";
-        } else if (result.error === "AUTH.DEVICE_MISMATCH") {
-          finalMsg += "<br><span style='color:yellow;'>裝置異常｜請洽營運組</span>";
-        } else if (result.error === "AUTH.DEVICE_TYPE_MISMATCH") {
-          finalMsg += "<br><span style='color:yellow;'>綁定裝置不符｜請洽營運組</span>";
-        }
-        if (result.detail) {
-          finalMsg += `<br><span style="font-size:14px;">詳細資訊: ${JSON.stringify(result.detail)}</span>`;
-        }
-        UIUtils.displayError(finalMsg);
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      }
-    } catch(err) {
-      UIUtils.displayError(`連線失敗: ${err.message}`);
-      UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-      UIUtils.enableAllButtonsExcept(button);
-    } finally {
-      ButtonStateManager.setOperationStatus(false);
-    }
-  }
-
-  /**
-   * 創建文本輸入組 - 包含 Placeholder
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @param {string} [placeholder=""] - 提示文字 (可選)
-   * @returns {HTMLElement} - 文本輸入組件
-   */
-  function createTextInputGroup(name, label, placeholder = "") {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    group.style.position = "relative";
-
-    const labelContainer = createLabelWithRequired(label); // 使用現有函數
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.name = name;
-    input.id = name;
-    input.className = "form-input"; // 使用通用 class
-    input.placeholder = placeholder; // 設置提示文字
-    input.style.width = "100%";
-    input.style.height = "42px";
-    input.style.boxSizing = "border-box";
-    input.style.padding = "10px 15px";
-    input.style.border = "1px solid #555";
-    input.style.borderRadius = "5px";
-    input.style.backgroundColor = "#333";
-    input.style.color = "#fff";
-    // input.required = true; // 按需設置是否必填
-
-    group.appendChild(labelContainer);
-    group.appendChild(input);
-    addValidationEvents(input); // 添加驗證
-    return group;
-  }
-
-  /**
-   * 顯示補卡表單
-   */
-  function showCardCorrectionForm() {
-    // 隱藏表單選擇模態框
-    hideFormApplicationModal();
-    
-    // 顯示補卡申請表單
-    createFormModal("補卡申請", createCardCorrectionFormContent(), submitCardCorrection);
-  }
-
-  /**
-   * 顯示加班表單
-   */
-  function showOvertimeForm() {
-    // 隱藏表單選擇模態框
-    hideFormApplicationModal();
-    
-    // 顯示加班申請表單
-    createFormModal("加班申請", createOvertimeFormContent(), submitOvertimeRequest);
-  }
-
-  /**
-   * 顯示請假表單
-   */
-  function showLeaveRequestForm() {
-    // 隱藏表單選擇模態框
-    hideFormApplicationModal();
-    
-    // 顯示請假申請表單
-    createFormModal("請假申請", createLeaveRequestFormContent(), submitLeaveRequest);
-  }
-
-  /**
-   * 顯示班別異動表單
-   */
-  function showShiftChangeForm() {
-    // 隱藏表單選擇模態框
-    hideFormApplicationModal();
-    
-    // 顯示異動班別表單
-    createFormModal("異動班別", createShiftChangeFormContent(), submitShiftChange);
-  }
-
-  /**
-   * 創建表單模態框 - 優化版（添加返回按鈕）
-   * @param {string} title - 模態框標題
-   * @param {HTMLElement} content - 模態框內容
-   * @param {Function} submitCallback - 提交回調函數
-   */
-  function createFormModal(title, content, submitCallback) {
-    // 創建模態框元素
-    const formOverlay = document.createElement("div");
-    formOverlay.className = "overlay show form-overlay";
-    formOverlay.id = "dynamicFormModal";
-
-    // 創建模態框內容
-    const formModal = document.createElement("div");
-    formModal.className = "form-modal";
-    
-    // 創建模態框標題區域（修改部分）
-    const formModalHeader = document.createElement("div");
-    formModalHeader.className = "form-modal-header";
-    
-    // 新增：添加陰影立體風格的返回按鈕
-    const backButton = document.createElement("button");
-    backButton.className = "back-button-shadow";
-    backButton.innerHTML = `
-      <span class="material-icons">arrow_back</span>
-      <span class="back-text">返回表單選擇</span>
-    `;
-    backButton.title = "返回表單選擇";
-    
-    // 添加標題文字
-    const titleText = document.createElement("h3");
-    titleText.style.width = "100%";
-    titleText.style.textAlign = "center";
-    titleText.textContent = title;
-    
-    // 組合標題區域
-    formModalHeader.appendChild(backButton);
-    formModalHeader.appendChild(titleText);
-    
-    // 創建模態框內容區域
-    const formModalContent = document.createElement("div");
-    formModalContent.className = "form-modal-content";
-    formModalContent.appendChild(content);
-    
-    // 創建滾動到頂部按鈕
-    const scrollTopButton = document.createElement("button");
-    scrollTopButton.type = "button";
-    scrollTopButton.className = "scroll-top-button";
-    scrollTopButton.innerHTML = '<span class="material-icons">keyboard_arrow_up</span>';
-    scrollTopButton.style.display = "none";
-    
-    // 創建按鈕區域
-    const formButtonsContainer = document.createElement("div");
-    formButtonsContainer.className = "form-buttons-container";
-    
-    // 創建取消按鈕
-    const cancelButton = document.createElement("button");
-    cancelButton.className = "btn btn-cancel";
-    cancelButton.textContent = "取消";
-    cancelButton.style.flex = "1";
-    cancelButton.style.marginRight = "10px";
-    
-    // 創建提交按鈕 - 根據表單類型設定不同文字
-    const submitButton = document.createElement("button");
-    submitButton.className = "btn btn-confirm";
-    submitButton.id = "submitFormBtn";
-    submitButton.style.flex = "1";
-    submitButton.style.marginLeft = "10px";
-    
-    // 修改：根據表單類型動態設定提交按鈕文字
-    if (title === "請假申請") {
-        submitButton.textContent = "下一步：上傳佐證";
-    } else {
-        submitButton.textContent = "提交表單";
-    }
-    
-    // 添加按鈕到容器
-    formButtonsContainer.appendChild(cancelButton);
-    formButtonsContainer.appendChild(submitButton);
-    
-    // 組合模態框
-    formModal.appendChild(formModalHeader);
-    formModal.appendChild(formModalContent);
-    formModal.appendChild(formButtonsContainer);
-    formOverlay.appendChild(formModal);
-    formOverlay.appendChild(scrollTopButton);
-    
-    // 添加到 body
-    document.body.appendChild(formOverlay);
-    
-    // 內容滾動事件處理
-    formModalContent.addEventListener("scroll", () => {
-      if (formModalContent.scrollTop > 100) {
-        scrollTopButton.style.display = "flex";
-      } else {
-        scrollTopButton.style.display = "none";
-      }
-    });
-    
-    // 滾動到頂部按鈕點擊事件
-    scrollTopButton.addEventListener("click", () => {
-      formModalContent.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    });
-    
-    // 新增：返回按鈕點擊事件
-    backButton.addEventListener("click", () => {
-      // 顯示確認對話框
-      const confirmBack = confirm("即將返回表單首頁｜所有欄位將清空");
-      if (confirmBack) {
-        // 關閉當前表單模態框
-        document.body.removeChild(formOverlay);
-        
-        // 重新顯示表單選擇模態框
-        showFormApplicationModal();
-      }
-    });
-    
-    // 取消按鈕事件
-    cancelButton.addEventListener("click", () => {
-      // 顯示確認對話框
-      const confirmCancel = confirm("即將關閉視窗｜所有欄位將清空");
-      if (confirmCancel) {
-        document.body.removeChild(formOverlay);
-      }
-    });
-    
-    // 點擊背景關閉
-    formOverlay.addEventListener("click", (e) => {
-      if (e.target === formOverlay) {
-        // 顯示確認對話框
-        const confirmCancel = confirm("離開視窗後｜所有欄位將清空");
-        if (confirmCancel) {
-          document.body.removeChild(formOverlay);
-        }
-      }
-    });
-    
-    // 提交按鈕事件
-    submitButton.addEventListener("click", async () => {
-      const formContentElement = formModalContent;
-      const errorContainer = formContentElement.querySelector("#form-error-container");
-      
-      // 清除舊錯誤 & 重置樣式
-      if (errorContainer) { errorContainer.style.display = 'none'; errorContainer.innerHTML = ''; }
-      resetFieldStyles(formContentElement);
-      
-      submitButton.disabled = true;
-      submitButton.textContent = "檢查權限...";
-      
-      try {
-        // --- 階段 1: 檢查彈出視窗權限 ---
-        const canOpenPopupInitially = await checkPopupPermission();
-        console.log("初始彈窗權限檢查結果:", canOpenPopupInitially);
-        if (!canOpenPopupInitially) {
-          console.warn("初始彈窗權限被阻止。");
-          // 顯示"彈出視窗被阻擋"錯誤 + "重新嘗試"按鈕 (觸發完整流程重試)
-          const initialBlockMessageHTML = `
-            <div style="padding:10px 15px; background-color:rgba(220, 53, 69, 0.1); border-left: 3px solid #dc3545; border-radius: 4px; margin-bottom: 15px; text-align:left; color:#f8d7da;">
-              <strong style="display:block; margin-bottom:5px;">彈出視窗被阻擋</strong>
-              請先允許彈出式視窗，然後點擊下方按鈕重試。
-              <span style="font-size:12px;">(檢查瀏覽器地址欄 <span class="material-icons" style="font-size:inherit; vertical-align:bottom;">popup_off</span> 圖示)</span>
-            </div>
-            <button type="button" id="retryInitialCheckBtn_${Date.now()}" class="btn" style="background:linear-gradient(to right, #3498db, #2980b9); color:white; margin:0 auto; display:block; padding:10px 20px; border-radius:5px; font-size:16px;">
-              <span class="material-icons" style="font-size:inherit; vertical-align:middle; margin-right:5px;">refresh</span>
-              重新嘗試提交
-            </button>
-          `;
-          if (errorContainer) {
-            errorContainer.innerHTML = initialBlockMessageHTML;
-            errorContainer.style.display = "block";
-            formContentElement.scrollTo({ top: 0, behavior: "smooth" });
-            const retryInitialButton = errorContainer.querySelector("button[id^='retryInitialCheckBtn_']");
-            if (retryInitialButton) {
-              retryInitialButton.addEventListener("click", function() { submitButton.click(); }); // 重試觸發主按鈕
-            }
-          }
-          // 根據表單類型恢復按鈕的正確文字 (與設定對應)
-          if (title === "請假申請") {
-            submitButton.textContent = "下一步：上傳佐證";
-          } else {
-            submitButton.textContent = "提交表單";
-          }
-          submitButton.disabled = false; // 恢復主按鈕
-          return; 
-        }
-        // --- 階段 2: 權限通過，進行表單驗證 ---
-        console.log("初始彈窗權限檢查通過。");
-        submitButton.textContent = "驗證資料...";
-        const formData = collectFormData(formContentElement);
-        let isValid = false;
-        
-        // 根據表單類型執行對應的驗證函數
-        if (title === "補卡申請") {
-          isValid = validateCardCorrectionFields(formData);
-        } else if (title === "加班申請") {
-          isValid = validateOvertimeFields(formData);
-        } else if (title === "請假申請") {
-          isValid = validateLeaveFields(formData);
-        } else if (title === "異動班別") {
-          isValid = validateShiftChangeFields(formData);
-        }
-        
-        if (!isValid) {
-          console.log("表單驗證失敗。");
-          displayValidationError(errorContainer, formContentElement);
-          // 根據表單類型恢復按鈕的正確文字
-          if (title === "請假申請") {
-            submitButton.textContent = "下一步：上傳佐證";
-          } else {
-            submitButton.textContent = "提交表單";
-          }
-          submitButton.disabled = false;
-          return;
-        }
-        // --- 階段 3: 驗證通過，執行提交 (調用 submitCallback) ---
-        console.log("驗證通過，開始調用 submitCallback...");
-        submitButton.textContent = "處理中...";
-        
-        // 核心回調處理
-        submitCallback(formData, (success, message, details) => { 
-          console.log("submitCallback 回調:", { success, message, details }); 
-          
-          if (success) { // stage: 'all_ok'
-            console.log("完整流程成功。");
-            // 修改：根據表單類型和後端回傳資訊來決定是否執行檔案上傳操作
-            if (title === "請假申請" && details && details.formType === 'leave' && 
-                details.needFile === true && details.uploadUrl && details.requestId) {
-              // 如果是請假表單且需要上傳檔案，打開上傳視窗
-              console.log(`表單類型 ${details.formType} 需要上傳檔案，開啟上傳視窗。`);
-              const opened = openAndTrackUploadWindow(details.uploadUrl, details.requestId);
-              
-              if (opened) {
-                // 關閉當前表單模態框
-                const modal = document.getElementById('dynamicFormModal');
-                if (modal) document.body.removeChild(modal);
-                UIUtils.displaySuccess(message + "｜請接著上傳檔案。");
-              } else {
-                // 處理彈出視窗被阻擋的情況
-                const popupFailedMessageHTML = `
-                  <div style="padding:10px 15px; background-color:rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107; border-radius: 4px; margin-bottom: 15px; text-align:left; color:#ffc107;">
-                    <strong style="display:block; margin-bottom:5px;">⌾上傳檔案異常</strong>
-                    您的請假申請已提交。但系統無法自動開啟檔案上傳頁面。<br>
-                    請檢查瀏覽器是否阻擋了彈出式視窗，然後點擊下方按鈕重試。<br>
-                  </div>
-                  <button type="button" id="retryPopupOpenBtn_${Date.now()}" class="btn" style="background:linear-gradient(to right, #ff9800, #e65100); color:white; margin:0 auto; display:block; padding:10px 20px; border-radius:5px; font-size:16px;">
-                    <span class="material-icons" style="font-size:inherit; vertical-align:middle; margin-right:5px;">open_in_new</span>
-                    重試開啟上傳頁面
-                  </button>
-                `;
-                if (errorContainer) {
-                  errorContainer.innerHTML = popupFailedMessageHTML;
-                  errorContainer.style.display = "block";
-                  formContentElement.scrollTo({ top: 0, behavior: "smooth" });
-                  
-                  // 為"重試開啟上傳頁面"按鈕添加只開窗的事件
-                  const retryPopupButton = errorContainer.querySelector("button[id^='retryPopupOpenBtn_']");
-                  if (retryPopupButton) {
-                    retryPopupButton.addEventListener("click", function() {
-                      console.log("執行重試開啟彈出視窗 for requestId:", details.requestId);
-                      // 只執行 openAndTrackUploadWindow
-                      const opened = openAndTrackUploadWindow(details.uploadUrl, details.requestId); 
-                      if (opened) {
-                        // 成功打開，關閉模態框，顯示提示
-                        const modal = document.getElementById('dynamicFormModal');
-                        if (modal) document.body.removeChild(modal);
-                        UIUtils.displaySuccess(`申請已提交｜上傳頁面已開啟`);
-                      } else {
-                        // 仍然失敗，更新錯誤訊息
-                        errorContainer.querySelector("div").innerHTML = `<strong style="display:block; margin-bottom:5px;">仍然無法開啟上傳頁面</strong>請再次檢查彈出視窗設定｜或稍後重新嘗試`;
-                      }
-                    });
-                  }
-                }
-                // 主按鈕保持禁用狀態
-                submitButton.textContent = "等待檔案上傳"; 
-                submitButton.disabled = true; 
-              }
-            } else {
-              // 對於其他表單類型，或請假表單但後端指示無需檔案，直接顯示成功訊息
-              console.log(`表單類型 ${details?.formType || title} 無需上傳檔案或缺少上傳資訊。`);
-              const modal = document.getElementById('dynamicFormModal');
-              if (modal) document.body.removeChild(modal);
-              UIUtils.displaySuccess(message);
-            }
-          } else { // 處理 submitCallback 回調中的 success 為 false 的情況
-            const stage = details ? details.stage : 'unknown';
-            
-            // 修改：增加表單類型判斷
-            const currentFormType = details?.formType || title; // 使用 details.formType 或 title 來判斷當前表單類型
-            
-            if (stage === 'popup' && details.requestId && details.uploadUrl) {
-              // API 成功，但 window.open 失敗
-              console.warn("API 成功，但 window.open 失敗。");
-              
-              // 只有請假申請表單才顯示"重試開啟上傳頁面"的提示
-              if (currentFormType === "請假申請" || currentFormType === "leave") {
-                console.warn(`API 成功，但 window.open 失敗 (表單類型: ${currentFormType})。提示使用者重試開啟上傳頁面。`);
-                
-                const popupFailedMessageHTML = `
-                  <div style="padding:10px 15px; background-color:rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107; border-radius: 4px; margin-bottom: 15px; text-align:left; color:#ffc107;">
-                    <strong style="display:block; margin-bottom:5px;">⌾上傳檔案異常</strong>
-                    請關閉瀏覽器的阻擋彈出式視窗，<br>
-                    或直接點擊下方按鈕執行上傳。<br>
-                  </div>
-                  <button type="button" id="retryPopupOpenBtn_${Date.now()}" class="btn" style="background:linear-gradient(to right, #ff9800, #e65100); color:white; margin:0 auto; display:block; padding:10px 20px; border-radius:5px; font-size:16px;">
-                    <span class="material-icons" style="font-size:inherit; vertical-align:middle; margin-right:5px;">open_in_new</span>
-                    重試開啟上傳頁面
-                  </button>
-                `;
-                if (errorContainer) {
-                  errorContainer.innerHTML = popupFailedMessageHTML;
-                  errorContainer.style.display = "block";
-                  formContentElement.scrollTo({ top: 0, behavior: "smooth" });
-                  
-                  // 為"重試開啟上傳頁面"按鈕添加只開窗的事件
-                  const retryPopupButton = errorContainer.querySelector("button[id^='retryPopupOpenBtn_']");
-                  if (retryPopupButton) {
-                    retryPopupButton.addEventListener("click", function() {
-                      console.log("執行重試開啟彈出視窗 for requestId:", details.requestId);
-                      // 只執行 openAndTrackUploadWindow
-                      const opened = openAndTrackUploadWindow(details.uploadUrl, details.requestId); 
-                      if (opened) {
-                        // 成功打開，關閉模態框，顯示提示（隱藏請求編號）
-                        const modal = document.getElementById('dynamicFormModal');
-                        if (modal) document.body.removeChild(modal);
-                        UIUtils.displaySuccess(`申請已提交｜上傳頁面已開啟`);
-                      } else {
-                        // 仍然失敗，更新錯誤訊息（隱藏請求編號）
-                        errorContainer.querySelector("div").innerHTML = `<strong style="display:block; margin-bottom:5px;">仍然無法開啟上傳頁面</strong>請再次檢查彈出視窗設定｜或稍後重新嘗試`;
-                        // 主按鈕仍然是禁用的
-                      }
-                    });
-                  }
-                }
-                // 主按鈕保持禁用狀態
-                submitButton.textContent = "等待檔案上傳"; 
-                submitButton.disabled = true;
-              } else {
-                // 其他非請假表單遇到 'popup' 錯誤 (非預期情況)
-                console.warn(`API 成功但 window.open 失敗，但表單類型 ${currentFormType} 無需檔案上傳。這是一個非預期情況。`);
-                UIUtils.displayError(message || "表單提交成功，但處理後續步驟時發生錯誤。請聯繫管理員。");
-                
-                // 恢復提交按鈕的初始狀態
-                submitButton.disabled = false;
-                submitButton.textContent = "提交表單";
-              }
-            } else {
-              // API 提交失敗 或 其他未知錯誤
-              UIUtils.displayError(message || "提交失敗｜請稍後再試");
-              // 根據表單類型恢復按鈕的正確文字
-              if (title === "請假申請") {
-                submitButton.textContent = "下一步：上傳佐證";
-              } else {
-                submitButton.textContent = "提交表單";
-              }
-              submitButton.disabled = false;
-            }
-          }
-        }); // submitCallback 回調結束
-      } catch (error) {
-        console.error("表單處理過程中出現錯誤:", error);
-        const errorContainer = formContentElement.querySelector("#form-error-container");
-        if (errorContainer) {
-          errorContainer.innerHTML = error.message || "處理失敗｜請稍後再試";
-          errorContainer.style.display = "block";
-          formContentElement.scrollTo({ top: 0, behavior: "smooth" });
-        }
-        // 根據表單類型恢復按鈕的正確文字
-        if (title === "請假申請") {
-          submitButton.textContent = "下一步：上傳佐證";
-        } else {
-          submitButton.textContent = "提交表單";
-        }
-        submitButton.disabled = false;
-      }
-    });
-  }
-
-  /**
-   * 收集表單數據
-   * @param {HTMLElement} formContent - 表單内容元素
-   * @returns {Object} 收集的表單數據
-   */
-  function collectFormData(formContent) {
-    const formData = {};
-    const inputs = formContent.querySelectorAll("input, select, textarea");
-    
-    inputs.forEach(input => {
-      if (input.name) {
-        formData[input.name] = input.value;
-      }
-    });
-    
-    return formData;
-  }
-
-  /**
-   * 顯示驗證錯誤
-   * @param {HTMLElement} errorContainer - 錯誤容器
-   * @param {HTMLElement} formContainer - 表單容器
-   */
-  function displayValidationError(errorContainer, formContainer) {
-    if (errorContainer) {
-      errorContainer.textContent = "請填寫所有必填欄位";
-      errorContainer.style.display = "block";
-    }
-    
-    // 滾動到頂部顯示錯誤
-    if (formContainer) {
-      formContainer.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-  }
-
-  /**
-   * 重置所有欄位樣式
-   * @param {HTMLElement} formContainer - 表單容器
-   */
-  function resetFieldStyles(formContainer) {
-    if (!formContainer) return;
-    
-    // 重設所有輸入欄位的樣式
-    formContainer.querySelectorAll(".form-input, .form-textarea, select").forEach(el => {
-      if (el.tagName) {
-        el.style.borderColor = "#555";
-      }
-    });
-    
-    // 隱藏所有必填標記
-    formContainer.querySelectorAll(".required-mark").forEach(mark => {
-      mark.style.display = "none";
-    });
-  }
-
-  /**
-   * 處理API錯誤
-   * @param {Error} error - 錯誤對象
-   * @param {HTMLElement} errorContainer - 錯誤容器
-   * @param {Function} callback - 回調函數
-   */
-  function handleProcessError(error, errorContainer, callback) {
-    console.error("處理錯誤:", error);
-    
-    if (errorContainer) {
-      errorContainer.textContent = error.message || "處理失敗，請稍後再試";
-      errorContainer.style.display = "block";
-    }
-    callback(false, error.message || "處理失敗，請稍後再試");
-  }
-
-  /**
-   * 創建帶有隱藏必填標記的標籤 (修正版)
-   * @param {string} labelText - 標籤文字
-   * @returns {HTMLElement} - 包含標籤文字和隱藏必填標記的容器
-   */
-  function createLabelWithRequired(labelText) {
-    // 創建標籤容器，使用flexbox進行布局
-    const labelContainer = document.createElement("div");
-    labelContainer.style.display = "flex";
-    labelContainer.style.alignItems = "center"; // 確保垂直居中
-    labelContainer.style.marginBottom = "5px";
-    labelContainer.style.flexWrap = "nowrap"; // 防止標籤與必填標記換行
-    
-    // 創建標籤元素
-    const labelElement = document.createElement("label");
-    labelElement.textContent = labelText;
-    labelElement.style.display = "inline-block";
-    labelElement.style.margin = "0";
-    labelElement.style.padding = "0";
-    labelElement.style.lineHeight = "1.5";
-    
-    // 創建必填標記元素 (初始隱藏)
-    const requiredMark = document.createElement("span");
-    requiredMark.textContent = " (必填欄位)";
-    requiredMark.className = "required-mark";
-    requiredMark.style.color = "#ff4444";
-    requiredMark.style.fontSize = "12px";
-    requiredMark.style.marginLeft = "5px";
-    requiredMark.style.fontWeight = "normal";
-    requiredMark.style.whiteSpace = "nowrap"; // 防止文字換行
-    requiredMark.style.lineHeight = "1.5";
-    requiredMark.style.display = "none"; // 初始時隱藏
-    
-    // 組合元素
-    labelContainer.appendChild(labelElement);
-    labelContainer.appendChild(requiredMark);
-    
-    return labelContainer;
-  }
-
-  /**
-   * 創建日期輸入組 - 加入必填驗證
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @returns {HTMLElement} - 日期輸入組件
-   */
-  function createDateInputGroup(name, label) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 日期輸入區域容器
-    const inputContainer = document.createElement("div");
-    inputContainer.className = "date-input-container";
-    inputContainer.style.display = "flex";
-    inputContainer.style.alignItems = "center"; 
-    inputContainer.style.height = "42px";
-    inputContainer.style.position = "relative";
-    inputContainer.style.width = "calc(100% - 90px)";
-    
-    // 日期輸入
-    const input = document.createElement("input");
-    input.type = "text";
-    input.name = name;
-    input.id = name;
-    input.required = true;
-    input.className = "form-input datepicker";
-    input.placeholder = "請選擇日期";
-    input.autocomplete = "off";
-    input.readOnly = true;
-    input.style.height = "42px";
-    input.style.boxSizing = "border-box";
-    input.style.padding = "10px";
-    input.style.border = "1px solid #555";
-    input.style.borderRadius = "5px";
-    input.style.backgroundColor = "#333";
-    input.style.color = "#fff";
-    input.style.textAlign = "left";
-    input.style.paddingLeft = "15px";
-    input.style.width = "100%";
-    
-    // 星期顯示
-    const weekdayElement = document.createElement("div");
-    weekdayElement.id = `${name}-weekday`;
-    weekdayElement.className = "weekday-display";
-    weekdayElement.style.position = "absolute";
-    weekdayElement.style.right = "-90px";
-    weekdayElement.style.top = "0";
-    weekdayElement.style.height = "42px";
-    weekdayElement.style.width = "80px";
-    weekdayElement.style.boxSizing = "border-box";
-    weekdayElement.style.padding = "0";
-    weekdayElement.style.backgroundColor = "#444";
-    weekdayElement.style.borderRadius = "5px";
-    weekdayElement.style.display = "flex";
-    weekdayElement.style.justifyContent = "center";
-    weekdayElement.style.alignItems = "center";
-    weekdayElement.style.fontSize = "16px";
-    
-    // 組合元素
-    inputContainer.appendChild(input);
-    inputContainer.appendChild(weekdayElement);
-    
-    group.appendChild(labelContainer);
-    group.appendChild(inputContainer);
-    
-    // 初始化 jQuery UI Datepicker
-    setTimeout(() => {
-      const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
-      
-      $(input).datepicker({
-        dateFormat: 'yy-mm-dd',
-        onSelect: function(dateText, inst) {
-          const date = $(this).datepicker('getDate');
-          if (date) {
-            weekdayElement.textContent = weekdays[date.getDay()];
-            clearFieldError(name);
-          }
-        },
-        beforeShow: function(input, inst) {
-          // 確保日期選擇器位置正確並調整大小
-          setTimeout(function() {
-            $('#ui-datepicker-div').css({
-              'width': `${DATEPICKER_CONFIG.width}px`,
-              'min-width': `${DATEPICKER_CONFIG.minWidth}px`,
-              'max-width': `${DATEPICKER_CONFIG.maxWidth}px`,
-              'background-color': DATEPICKER_CONFIG.background,
-              'border': 'none',
-              'box-shadow': DATEPICKER_CONFIG.boxShadow,
-              'margin-top': '0',
-              'padding': '0'
-            });
-            
-            // 確保選擇器不會超出視窗範圍
-            const inputPosition = $(input).offset();
-            const dpWidth = $(inst.dpDiv).outerWidth();
-            const windowWidth = $(window).width();
-            
-            if (inputPosition.left + dpWidth > windowWidth) {
-              const diff = (inputPosition.left + dpWidth) - windowWidth;
-              $(inst.dpDiv).css({
-                left: Math.max(5, (inputPosition.left - diff - 10)) + 'px'
-              });
-            }
-          }, 10);
-        }
-      });
-      
-      // 添加驗證事件
-      addValidationEvents(input);
-    }, 0);
-    
-    return group;
-  }
-
-  /**
-   * 創建時間輸入組 - 加入必填驗證
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @returns {HTMLElement} - 時間輸入組件
-   */
-  function createTimeInputGroup(name, label) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 時間輸入區域容器
-    const inputContainer = document.createElement("div");
-    inputContainer.className = "time-input-container";
-    inputContainer.style.display = "flex";
-    inputContainer.style.alignItems = "center";
-    inputContainer.style.height = "42px";
-    inputContainer.style.position = "relative";
-    inputContainer.style.width = "calc(100% - 0px)";
-    
-    // 時間輸入
-    const input = document.createElement("input");
-    input.type = "text";
-    input.name = name;
-    input.id = name;
-    input.required = true;
-    input.className = "form-input timepicker";
-    input.placeholder = "請選擇時間";
-    input.autocomplete = "off";
-    input.readOnly = true;
-    input.style.height = "42px";
-    input.style.boxSizing = "border-box";
-    input.style.padding = "10px";
-    input.style.border = "1px solid #555";
-    input.style.borderRadius = "5px";
-    input.style.backgroundColor = "#333";
-    input.style.color = "#fff";
-    input.style.textAlign = "left";
-    input.style.paddingLeft = "15px";
-    input.style.width = "100%";
-    
-    // 增加填充元素以保持寬度一致
-    const spacerElement = document.createElement("div");
-    spacerElement.className = "spacer-element";
-    spacerElement.style.position = "absolute";
-    spacerElement.style.right = "-90px";
-    spacerElement.style.top = "0";
-    spacerElement.style.width = "80px";
-    spacerElement.style.minWidth = "80px";
-    spacerElement.style.height = "42px";
-    spacerElement.style.visibility = "hidden";
-    
-    // 組合元素
-    inputContainer.appendChild(input);
-    inputContainer.appendChild(spacerElement);
-    
-    group.appendChild(labelContainer);
-    group.appendChild(inputContainer);
-    
-    // 初始化 jQuery UI Timepicker
-    setTimeout(() => {
-      $(input).timepicker({
-        timeFormat: 'HH:mm',
-        controlType: 'select',
-        showSecond: false,
-        amNames: ['上午', 'AM', 'A'],
-        pmNames: ['下午', 'PM', 'P'],
-        hourMin: 0,
-        hourMax: 23,
-        hourGrid: 0,
-        minuteGrid: 0,
-        showButtonPanel: false,
-        timeOnlyTitle: '二十四小時制', // 修改標題為「二十四小時制」
-        onSelect: function(timeText, inst) {
-          if (timeText) {
-            clearFieldError(name);
-          }
-        },
-        onClose: function(timeText, inst) {
-          if (timeText) {
-            clearFieldError(name);
-          }
-        },
-        beforeShow: function(input, inst) {
-          setTimeout(function() {
-            // 使用配置中心的設置
-            $('#ui-datepicker-div').css({
-              'width': `${TIMEPICKER_CONFIG.width}px`,
-              'min-width': `${TIMEPICKER_CONFIG.minWidth}px`,
-              'max-width': `${TIMEPICKER_CONFIG.maxWidth}px`,
-              'background-color': TIMEPICKER_CONFIG.background,
-              'border': 'none',
-              'box-shadow': DATEPICKER_CONFIG.boxShadow,
-              'margin-top': '0',
-              'padding': '0',
-              'overflow': 'hidden'
-            });
-            
-            // 時間選擇器樣式
-            $('.ui-timepicker-div').css({
-              'width': '100%',
-              'min-width': `${TIMEPICKER_CONFIG.minWidth}px`,
-              'max-width': `${TIMEPICKER_CONFIG.maxWidth}px`,
-              'background-color': TIMEPICKER_CONFIG.background,
-              'border': 'none',
-              'border-top': TIMEPICKER_CONFIG.borderTop,
-              'border-radius': '0',
-              'padding': TIMEPICKER_CONFIG.padding,
-              'box-shadow': 'none',
-              'overflow': 'hidden'
-            });
-            
-            // 完全隱藏滑塊
-            $('.ui-slider').hide();
-            
-            // 調整下拉選單容器
-            $('.ui-timepicker-div dl').css({
-              'display': 'flex',
-              'flex-direction': 'row',
-              'justify-content': 'space-around',
-              'align-items': 'center',
-              'margin': '0',
-              'padding': '0 10px',
-              'width': '100%'
-            });
-            
-            // 調整小時和分鐘容器
-            $('.ui-timepicker-div dd').css({
-              'margin': '0',
-              'padding': '0',
-              'width': '45%',
-              'text-align': 'center'
-            });
-            
-            // 調整選擇器樣式
-            $('.ui-timepicker-div select').css({
-              'width': '100%',
-              'margin': '0 auto',
-              'text-align': 'center',
-              'text-align-last': 'center',
-              'padding': '8px 4px',
-              'font-size': '16px',
-              'background-color': '#333',
-              'color': '#fff',
-              'border': '1px solid #555',
-              'border-radius': '4px'
-            });
-            
-            // 添加確認和取消按鈕
-            if ($('.ui-timepicker-div .timepicker-buttons').length === 0) {
-              // 創建按鈕容器
-              const buttonContainer = $('<div class="timepicker-buttons"></div>');
-              buttonContainer.css({
-                'display': 'flex',
-                'justify-content': 'space-between',
-                'margin-top': '15px',
-                'padding-top': '15px',
-                'border-top': '1px solid #444',
-                'width': '100%'
-              });
-              
-              // 創建取消按鈕
-              const cancelButton = $('<button type="button" class="timepicker-button cancel">取消</button>');
-              cancelButton.css({
-                'background-color': '#666',
-                'color': '#fff',
-                'border': '1px solid #555',
-                'border-radius': '5px',
-                'padding': '8px 15px',
-                'font-size': '14px',
-                'cursor': 'pointer',
-                'min-width': '80px',
-                'text-align': 'center'
-              });
-              cancelButton.on('click', function() {
-                $(input).timepicker('hide');
-              });
-              
-              // 創建確認按鈕
-              const confirmButton = $('<button type="button" class="timepicker-button confirm">確認</button>');
-              confirmButton.css({
-                'background-color': '#2c7a3e',
-                'color': '#fff',
-                'border': '1px solid #1e5a2d',
-                'border-radius': '5px',
-                'padding': '8px 15px',
-                'font-size': '14px',
-                'cursor': 'pointer',
-                'min-width': '80px',
-                'text-align': 'center'
-              });
-              confirmButton.on('click', function() {
-                // 隱藏必填提示
-                clearFieldError(name);
-                $(input).timepicker('hide');
-              });
-              
-              // 添加按鈕到容器
-              buttonContainer.append(cancelButton);
-              buttonContainer.append(confirmButton);
-              
-              // 將按鈕容器添加到時間選擇器
-              $('.ui-timepicker-div').append(buttonContainer);
-            }
-            
-            // 確保選擇器不會超出視窗範圍
-            const inputPosition = $(input).offset();
-            const tpWidth = $('#ui-datepicker-div').outerWidth();
-            const windowWidth = $(window).width();
-            
-            if (inputPosition.left + tpWidth > windowWidth) {
-              const diff = (inputPosition.left + tpWidth) - windowWidth;
-              $('#ui-datepicker-div').css({
-                left: Math.max(5, (inputPosition.left - diff - 10)) + 'px'
-              });
-            }
-          }, 10);
-        }
-      });
-      
-      // 添加驗證事件
-      addValidationEvents(input);
-    }, 0);
-    
-    return group;
-  }
-
-  /**
-   * 創建文本區域輸入組 - 加入必填驗證與輸入限制
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @param {string} [placeholder=""] - 提示文字 (可選)
-   * @returns {HTMLElement} - 文本區域組件
-   */
-  function createTextAreaInputGroup(name, label, placeholder = "") {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    group.style.position = "relative";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 文本區域輸入
-    const textarea = document.createElement("textarea");
-    textarea.name = name;
-    textarea.id = name;
-    textarea.required = true;
-    textarea.className = "form-textarea";
-    textarea.placeholder = placeholder; // 設置提示文字
-    textarea.style.width = "100%";
-    textarea.style.padding = "10px";
-    textarea.style.border = "1px solid #555";
-    textarea.style.borderRadius = "5px";
-    textarea.style.backgroundColor = "#333";
-    textarea.style.color = "#fff";
-    textarea.style.minHeight = "80px";
-    textarea.style.resize = "vertical";
-    
-    // 添加輸入限制事件監聽器
-    textarea.addEventListener('input', () => {
-      // 包含禁止符號和表情符號範圍的正則表達式
-      const forbiddenRegex = /[+\-\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-      let originalValue = textarea.value;
-      let cleanedValue = originalValue.replace(forbiddenRegex, '');
-      
-      if (originalValue !== cleanedValue) {
-        textarea.value = cleanedValue; // 更新為清理後的值
-        
-        // 顯示暫時提示
-        const existingWarning = labelContainer.querySelector('.temp-warning');
-        if (!existingWarning) { // 避免重複添加提示
-          const tempWarning = document.createElement('span');
-          tempWarning.textContent = ' (請勿輸入符號或表情)';
-          tempWarning.className = 'temp-warning';
-          tempWarning.style.color = 'orange';
-          tempWarning.style.fontSize = '12px';
-          tempWarning.style.marginLeft = '5px';
-          labelContainer.appendChild(tempWarning);
-          
-          setTimeout(() => {
-            if (tempWarning.parentNode) tempWarning.parentNode.removeChild(tempWarning);
-          }, 2000);
-        }
-      }
-    });
-    
-    // 組合元素
-    group.appendChild(labelContainer);
-    group.appendChild(textarea);
-    
-    // 添加驗證事件
-    addValidationEvents(textarea);
-    
-    return group;
-  }
-
-  /**
-   * 使用SVG方案實現絕對居中 - 按鈕選擇組
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @returns {HTMLElement} - 按鈕選擇組件
-   */
-  function createActionButtonGroup(name, label) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 創建容器
-    const radioContainer = document.createElement("div");
-    radioContainer.className = "radio-container";
-    radioContainer.style.display = "flex";
-    radioContainer.style.gap = "15px";
-    radioContainer.style.marginTop = "5px";
-    radioContainer.style.height = "42px";
-    
-    // 隱藏輸入存儲選中值
-    const hiddenInput = document.createElement("input");
-    hiddenInput.type = "hidden";
-    hiddenInput.name = name;
-    hiddenInput.id = name;
-    hiddenInput.required = true;
-    hiddenInput.value = "上班"; // 默認選中上班
-    
-    // 創建選項 - 使用SVG
-    const clockInOption = createSvgOption("上班", true);
-    const clockOutOption = createSvgOption("下班", false);
-    
-    // 添加選項到容器
-    radioContainer.appendChild(clockInOption);
-    radioContainer.appendChild(clockOutOption);
-    
-    // 組合元素
-    group.appendChild(labelContainer);
-    group.appendChild(radioContainer);
-    group.appendChild(hiddenInput);
-    
-    /**
-     * 創建SVG選項
-     * @param {string} value - 選項值
-     * @param {boolean} isChecked - 是否選中
-     * @returns {HTMLElement} - SVG選項元素
-     */
-    function createSvgOption(value, isChecked) {
-      // 主容器
-      const option = document.createElement("div");
-      option.className = "radio-option svg-option";
-      option.dataset.value = value;
-      option.style.flex = "1";
-      option.style.height = "42px";
-      option.style.border = "1px solid #555";
-      option.style.borderRadius = "6px";
-      option.style.backgroundColor = isChecked ? "#2c7a3e" : "#333";
-      option.style.color = "#fff";
-      option.style.cursor = "pointer";
-      option.style.position = "relative";
-      option.style.overflow = "hidden";
-      
-      // 創建SVG內容
-      const svgContainer = document.createElement("div");
-      svgContainer.style.position = "absolute";
-      svgContainer.style.top = "0";
-      svgContainer.style.left = "0";
-      svgContainer.style.width = "100%";
-      svgContainer.style.height = "100%";
-      svgContainer.style.display = "flex";
-      svgContainer.style.alignItems = "center";
-      svgContainer.style.justifyContent = "center";
-      
-      // 創建SVG
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("width", "70");
-      svg.setAttribute("height", "24");
-      svg.setAttribute("viewBox", "0 0 70 24");
-      svg.style.display = "block";
-      
-      // 勾選標記 (只有在選中時顯示)
-      const check = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      check.setAttribute("x", "12");
-      check.setAttribute("y", "16");
-      check.setAttribute("font-size", "16");
-      check.setAttribute("font-weight", "bold");
-      check.setAttribute("fill", "white");
-      check.setAttribute("text-anchor", "middle");
-      check.textContent = "✓";
-      check.style.opacity = isChecked ? "1" : "0";
-      
-      // 文本標籤
-      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      text.setAttribute("x", "40");
-      text.setAttribute("y", "16");
-      text.setAttribute("font-size", "16");
-      text.setAttribute("font-weight", "bold");
-      text.setAttribute("fill", "white");
-      text.setAttribute("text-anchor", "middle");
-      text.textContent = value;
-      
-      // 組裝SVG
-      svg.appendChild(check);
-      svg.appendChild(text);
-      svgContainer.appendChild(svg);
-      option.appendChild(svgContainer);
-      
-      // 點擊事件
-      option.addEventListener("click", function() {
-        // 更新隱藏輸入值
-        hiddenInput.value = value;
-        
-        // 更新選中狀態
-        const options = radioContainer.querySelectorAll(".radio-option");
-        options.forEach(opt => {
-          const isSelected = opt.dataset.value === value;
-          opt.style.backgroundColor = isSelected ? "#2c7a3e" : "#333";
-          
-          // 更新勾選標記顯示狀態
-          const checkElement = opt.querySelector("svg text:first-child");
-          if (checkElement) {
-            checkElement.style.opacity = isSelected ? "1" : "0";
-          }
-        });
-        
-        // 清除錯誤提示
-        clearFieldError(name);
-      });
-      
-      return option;
-    }
-    
-    // 添加驗證事件
-    addValidationEvents(hiddenInput);
-    
-    return group;
-  }
-
-  /**
-   * 創建選擇輸入組 - 加入必填驗證
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @param {Array<{value: string, label: string}>} options - 選項列表
-   * @returns {HTMLElement} - 選擇輸入組件
-   */
-  function createSelectInputGroup(name, label, options) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 選擇輸入
-    const select = document.createElement("select");
-    select.name = name;
-    select.id = name;
-    select.required = true;
-    select.className = "form-select";
-    select.style.width = "100%";
-    select.style.padding = "10px";
-    select.style.border = "1px solid #555";
-    select.style.borderRadius = "5px";
-    select.style.backgroundColor = "#333";
-    select.style.color = "#fff";
-    
-    // 添加選項
-    options.forEach(option => {
-      const optionElement = document.createElement("option");
-      optionElement.value = option.value;
-      optionElement.textContent = option.label;
-      select.appendChild(optionElement);
-    });
-    
-    // 組合元素
-    group.appendChild(labelContainer);
-    group.appendChild(select);
-    
-    // 添加驗證事件
-    addValidationEvents(select);
-    
-    return group;
-  }
-
-  /**
-   * 創建見證人輸入組件
-   * @param {string} name - 欄位名稱
-   * @param {string} label - 顯示標籤
-   * @returns {HTMLElement} 見證人輸入組件
-   */
-  function createWitnessInputGroup(name, label) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    group.style.position = "relative";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 說明文字
-    const description = document.createElement("p");
-    description.textContent = "徵求當班同仁願佐證補卡時間為屬實";
-    description.style.fontSize = "12px";
-    description.style.color = "#aaa";
-    description.style.margin = "0 0 5px 0";
-    
-    // 文本輸入
-    const input = document.createElement("input");
-    input.type = "text";
-    input.name = name;
-    input.id = name;
-    input.className = "form-input";
-    input.placeholder = "請鍵入見證人姓名";
-    input.style.width = "100%";
-    input.style.height = "42px";
-    input.style.boxSizing = "border-box";
-    input.style.padding = "10px 15px";
-    input.style.border = "1px solid #555";
-    input.style.borderRadius = "5px";
-    input.style.backgroundColor = "#333";
-    input.style.color = "#fff";
-    
-    // 組合元素
-    group.appendChild(labelContainer);
-    group.appendChild(description);
-    group.appendChild(input);
-    
-    // 添加驗證事件
-    addValidationEvents(input);
-    
-    return group;
-  }
-
-  /**
-   * 創建日期範圍輸入組
-   * @param {string} startName - 開始日期欄位名稱
-   * @param {string} endName - 結束日期欄位名稱
-   * @param {string} label - 顯示標籤
-   * @returns {HTMLElement} - 日期範圍輸入組件
-   */
-  function createDateRangeInputGroup(startName, endName, label) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "15px";
-    
-    // 使用修改後的函數創建帶有必填標記的標籤
-    const labelContainer = createLabelWithRequired(label);
-    
-    // 開始日期容器
-    const startContainer = document.createElement("div");
-    startContainer.className = "date-input-container";
-    startContainer.style.display = "flex";
-    startContainer.style.alignItems = "center";
-    startContainer.style.marginBottom = "10px";
-    
-    const startLabel = document.createElement("span");
-    startLabel.textContent = "開始日期：";
-    startLabel.style.minWidth = "70px";
-    startLabel.style.color = "#aaa";
-    
-    // 開始日期輸入
-    const startInput = document.createElement("input");
-    startInput.type = "text";
-    startInput.name = startName;
-    startInput.id = startName;
-    startInput.required = true;
-    startInput.className = "form-input datepicker";
-    startInput.placeholder = "請選擇開始日期";
-    startInput.autocomplete = "off";
-    startInput.readOnly = true;
-    startInput.style.flex = "1";
-    startInput.style.padding = "10px";
-    startInput.style.paddingLeft = "15px";
-    startInput.style.border = "1px solid #555";
-    startInput.style.borderRadius = "5px";
-    startInput.style.backgroundColor = "#333";
-    startInput.style.color = "#fff";
-    startInput.style.textAlign = "left";
-    
-    // 開始日期星期
-    const startWeekday = document.createElement("div");
-    startWeekday.id = `${startName}-weekday`;
-    startWeekday.className = "weekday-display";
-    startWeekday.style.marginLeft = "10px";
-    startWeekday.style.padding = "10px";
-    startWeekday.style.backgroundColor = "#444";
-    startWeekday.style.borderRadius = "5px";
-    startWeekday.style.minWidth = "50px";
-    startWeekday.style.textAlign = "center";
-    
-    startContainer.appendChild(startLabel);
-    startContainer.appendChild(startInput);
-    startContainer.appendChild(startWeekday);
-    
-    // 結束日期容器
-    const endContainer = document.createElement("div");
-    endContainer.className = "date-input-container";
-    endContainer.style.display = "flex";
-    endContainer.style.alignItems = "center";
-    
-    const endLabel = document.createElement("span");
-    endLabel.textContent = "結束日期：";
-    endLabel.style.minWidth = "70px";
-    endLabel.style.color = "#aaa";
-    
-    // 結束日期輸入
-    const endInput = document.createElement("input");
-    endInput.type = "text";
-    endInput.name = endName;
-    endInput.id = endName;
-    endInput.required = true;
-    endInput.className = "form-input datepicker";
-    endInput.placeholder = "請選擇結束日期";
-    endInput.autocomplete = "off";
-    endInput.readOnly = true;
-    endInput.style.flex = "1";
-    endInput.style.padding = "10px";
-    endInput.style.paddingLeft = "15px";
-    endInput.style.border = "1px solid #555";
-    endInput.style.borderRadius = "5px";
-    endInput.style.backgroundColor = "#333";
-    endInput.style.color = "#fff";
-    endInput.style.textAlign = "left";
-    
-    // 結束日期星期
-    const endWeekday = document.createElement("div");
-    endWeekday.id = `${endName}-weekday`;
-    endWeekday.className = "weekday-display";
-    endWeekday.style.marginLeft = "10px";
-    endWeekday.style.padding = "10px";
-    endWeekday.style.backgroundColor = "#444";
-    endWeekday.style.borderRadius = "5px";
-    endWeekday.style.minWidth = "50px";
-    endWeekday.style.textAlign = "center";
-    
-    endContainer.appendChild(endLabel);
-    endContainer.appendChild(endInput);
-    endContainer.appendChild(endWeekday);
-    
-    // 請假天數顯示區域
-    const daysDisplay = document.createElement("div");
-    daysDisplay.id = "leaveDaysDisplay";
-    daysDisplay.style.marginTop = "10px";
-    daysDisplay.style.padding = "8px 12px";
-    daysDisplay.style.backgroundColor = "rgba(52, 152, 219, 0.1)";
-    daysDisplay.style.borderRadius = "4px";
-    daysDisplay.style.color = "#3498db";
-    daysDisplay.style.fontSize = "13px";
-    daysDisplay.style.display = "none"; // 初始隱藏
-    daysDisplay.style.textAlign = "center";
-    daysDisplay.innerHTML = `
-      <span class="material-icons" style="font-size:16px; vertical-align:bottom; margin-right:5px;">date_range</span>
-      預計請假天數：<strong id="calculatedDays" style="font-weight:bold; color:#fff;">--</strong> 天
-      <br><span style="font-size:11px; color:#aaa;">(含起訖日，實際天數以審核為準)</span>
-    `;
-    
-    // 組合元素
-    group.appendChild(labelContainer);
-    group.appendChild(startContainer);
-    group.appendChild(endContainer);
-    group.appendChild(daysDisplay);
-    
-    // 初始化
-    setTimeout(() => {
-      const weekdays = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
-      
-      // 更新請假天數計算
-      const updateDays = () => {
-        const startVal = startInput.value;
-        const endVal = endInput.value;
-        const days = calculateEstimatedLeaveDays(startVal, endVal);
-        if (days !== null && days >= 1) {
-          document.getElementById('calculatedDays').textContent = days;
-          daysDisplay.style.display = "block";
-        } else {
-          document.getElementById('calculatedDays').textContent = "--";
-          daysDisplay.style.display = "none";
-        }
-      };
-      
-      // 初始化開始日期選擇器
-      $(startInput).datepicker({
-        dateFormat: 'yy-mm-dd',
-        onSelect: function(dateText, inst) {
-          const date = $(this).datepicker('getDate');
-          if (date) {
-            startWeekday.textContent = weekdays[date.getDay()];
-            
-            // 檢查結束日期是否需要調整
-            const endDate = $(endInput).datepicker('getDate');
-            if (endDate && date > endDate) {
-              $(endInput).datepicker('setDate', date);
-              endWeekday.textContent = weekdays[date.getDay()];
-            }
-            
-            // 清除錯誤提示
-            clearFieldError(startName);
-            
-            // 更新請假天數
-            updateDays();
-          }
-        },
-        beforeShow: function(input, inst) {
-          // 確保日期選擇器與輸入框同寬
-          setTimeout(function() {
-            $('#ui-datepicker-div').css({
-              'width': `${DATEPICKER_CONFIG.width}px`,
-              'min-width': `${DATEPICKER_CONFIG.minWidth}px`,
-              'max-width': `${DATEPICKER_CONFIG.maxWidth}px`,
-              'background-color': DATEPICKER_CONFIG.background,
-              'border': 'none',
-              'box-shadow': DATEPICKER_CONFIG.boxShadow,
-              'margin-top': '0',
-              'padding': '0'
-            });
-          }, 0);
-        }
-      });
-      
-      // 初始化結束日期選擇器
-      $(endInput).datepicker({
-        dateFormat: 'yy-mm-dd',
-        onSelect: function(dateText, inst) {
-          const date = $(this).datepicker('getDate');
-          if (date) {
-            endWeekday.textContent = weekdays[date.getDay()];
-            
-            // 確保結束日期不早於開始日期
-            const startDate = $(startInput).datepicker('getDate');
-            if (startDate && date < startDate) {
-              $(startInput).datepicker('setDate', date);
-              startWeekday.textContent = weekdays[date.getDay()];
-            }
-            
-            // 清除錯誤提示
-            clearFieldError(endName);
-            
-            // 更新請假天數
-            updateDays();
-          }
-        },
-        beforeShow: function(input, inst) {
-          // 確保日期選擇器與輸入框同寬
-          setTimeout(function() {
-            $('#ui-datepicker-div').css({
-              'width': `${DATEPICKER_CONFIG.width}px`,
-              'min-width': `${DATEPICKER_CONFIG.minWidth}px`,
-              'max-width': `${DATEPICKER_CONFIG.maxWidth}px`,
-              'background-color': DATEPICKER_CONFIG.background,
-              'border': 'none',
-              'box-shadow': DATEPICKER_CONFIG.boxShadow,
-              'margin-top': '0',
-              'padding': '0'
-            });
-          }, 0);
-        }
-      });
-      
-      // 添加驗證事件
-      addValidationEvents(startInput);
-      addValidationEvents(endInput);
-    }, 0);
-    
-    return group;
-  }
-
-  /**
-   * 創建檔案上傳說明區塊
-   * @returns {HTMLElement} - 檔案上傳提示元素
-   */
-  function createFileUploadNote() {
-    const noteContainer = document.createElement("div");
-    noteContainer.className = "file-upload-note";
-    
-    // 添加圖標
-    const icon = document.createElement("span");
-    icon.className = "material-icons";
-    icon.textContent = "file_upload";
-    icon.style.marginRight = "8px";
-    
-    // 添加文字
-    const text = document.createElement("span");
-    text.innerHTML = "提交表單前｜請關閉：阻擋彈出式視窗功能";
-    
-    // 組合元素
-    noteContainer.appendChild(icon);
-    noteContainer.appendChild(text);
-    
-    return noteContainer;
-  }
-
-  /**
-   * 創建補卡表單內容
-   * @returns {HTMLElement} 表單內容元素
-   */
-  function createCardCorrectionFormContent() {
-    const content = document.createElement("div");
-    content.className = "form-content";
-    
-    // 日期選擇
-    const dateGroup = createDateInputGroup("cardDate", "日期");
-    content.appendChild(dateGroup);
-    
-    // A. 時間選擇
-    const timeGroup = createTimeInputGroup("cardTime", "時間");
-    content.appendChild(timeGroup);
-    
-    // B. 時段選擇
-    const actionGroup = createActionButtonGroup("cardAction", "時段");
-    content.appendChild(actionGroup);
-    
-    // C. 類型下拉選單
-    const typeOptions = [
-      { value: "", label: "請選擇類型" },
-      { value: "重複打卡", label: "重複打卡" },
-      { value: "空缺紀錄", label: "空缺紀錄" },
-      { value: "其他", label: "其他" }
-    ];
-    const typeGroup = createSelectInputGroup("cardType", "類型", typeOptions);
-    content.appendChild(typeGroup);
-    
-    // D. 補卡原因
-    const reasonGroup = createTextAreaInputGroup("cardReason", "原因");
-    content.appendChild(reasonGroup);
-    
-    // E. 見證人欄位
-    const witnessGroup = createWitnessInputGroup("cardWitness", "見證人");
-    content.appendChild(witnessGroup);
-    
-    // 新增: 當班 Duty 欄位
-    const dutyGroup = createTextInputGroup("cardDuty", "當班 Duty", "請填入當天Duty本名");
-    content.appendChild(dutyGroup);
-    
-    // 移除: 不再添加檔案上傳提示
-    // const fileNote = createFileUploadNote();
-    // content.appendChild(fileNote);
-    
-    // 表單錯誤訊息容器
-    const errorContainer = document.createElement("div");
-    errorContainer.id = "form-error-container";
-    errorContainer.className = "form-error-container";
-    errorContainer.style.color = "#ff4444";
-    errorContainer.style.fontSize = "14px";
-    errorContainer.style.marginTop = "15px";
-    errorContainer.style.padding = "10px";
-    errorContainer.style.borderRadius = "5px";
-    errorContainer.style.backgroundColor = "rgba(255, 68, 68, 0.1)";
-    errorContainer.style.display = "none";
-    errorContainer.style.textAlign = "center";
-    content.appendChild(errorContainer);
-    
-    return content;
-  }
-
-  /**
-   * 創建加班申請表單內容 - 修改標題並整合進位計算
-   * @returns {HTMLElement} 表單內容元素
-   */
-  function createOvertimeFormContent() {
-    const content = document.createElement("div");
-    content.className = "form-content";
-    
-    // 日期選擇
-    const dateGroup = createDateInputGroup("overtimeDate", "日期");
-    content.appendChild(dateGroup);
-    
-    // 加班類型選擇 - 標題修改為「類型」
-    const overtimeTypeOptions = [
-      { value: "", label: "請選擇類型" },
-      { value: "平常日", label: "平常日" },
-      { value: "休息日", label: "休息日" }
-    ];
-    const typeGroup = createSelectInputGroup("overtimeType", "類型", overtimeTypeOptions);
-    content.appendChild(typeGroup);
-    
-    // 開始時間選擇
-    const startTimeGroup = createTimeInputGroup("overtimeStartTime", "開始時間");
-    content.appendChild(startTimeGroup);
-    
-    // 結束時間選擇
-    const endTimeGroup = createTimeInputGroup("overtimeEndTime", "結束時間");
-    content.appendChild(endTimeGroup);
-    
-    // 加班時數試算顯示區域
-    const hoursDisplay = document.createElement("div");
-    hoursDisplay.id = "overtimeHoursDisplay";
-    hoursDisplay.style.marginTop = "-10px";
-    hoursDisplay.style.marginBottom = "15px";
-    hoursDisplay.style.padding = "8px 12px";
-    hoursDisplay.style.backgroundColor = "rgba(52, 152, 219, 0.1)";
-    hoursDisplay.style.borderRadius = "4px";
-    hoursDisplay.style.color = "#3498db";
-    hoursDisplay.style.fontSize = "13px";
-    hoursDisplay.style.display = "none"; // 初始隱藏
-    hoursDisplay.style.textAlign = "center"; 
-    hoursDisplay.innerHTML = `
-      <span class="material-icons" style="font-size:16px; vertical-align:bottom; margin-right:5px;">timer</span>
-      預計加班時數：<strong id="calculatedHours" style="font-weight:bold; color:#fff;">--</strong> 小時
-      <br><span style="font-size:11px; color:#aaa;">(15分鐘↑進位0.5小時，45分鐘↑進位1小時)</span>
-    `;
-    content.appendChild(hoursDisplay);
-    
-    // 加班原因 - 修改提示詞
-    const reasonGroup = createTextAreaInputGroup(
-      "overtimeReason", 
-      "原因", 
-      "e.g., 21:00~21:30 協助現場收班"
-    );
-    content.appendChild(reasonGroup);
-    
-    // 新增: Duty 簽名區域
-    const dutySignatureGroup = document.createElement("div");
-    dutySignatureGroup.className = "form-group";
-    dutySignatureGroup.style.marginBottom = "15px";
-
-    const dutyLabelContainer = createLabelWithRequired("當班 Duty");
-    dutySignatureGroup.appendChild(dutyLabelContainer);
-
-    // 簽名按鈕
-    const signButton = document.createElement("button");
-    signButton.type = "button";
-    signButton.textContent = "請讓 Duty 點擊此處署名";
-    signButton.className = "btn";
-    signButton.style.backgroundColor = "#555";
-    signButton.style.width = "100%";
-    signButton.style.color = "#fff";
-    signButton.style.padding = "10px";
-    signButton.style.border = "none";
-    signButton.style.borderRadius = "5px";
-    signButton.style.cursor = "pointer";
-    dutySignatureGroup.appendChild(signButton);
-
-    // 隱藏的輸入框
-    const dutyNameInput = document.createElement("input");
-    dutyNameInput.type = "text";
-    dutyNameInput.name = "overtimeDuty";
-    dutyNameInput.id = "overtimeDuty";
-    dutyNameInput.className = "form-input";
-    dutyNameInput.placeholder = "請Duty請在此鍵入本名";
-    dutyNameInput.style.display = "none"; // 初始隱藏
-    dutyNameInput.style.marginTop = "5px";
-    dutyNameInput.required = true; // Duty 簽名為必填
-    dutySignatureGroup.appendChild(dutyNameInput);
-
-    content.appendChild(dutySignatureGroup);
-
-    // 簽名按鈕點擊事件
-    signButton.addEventListener('click', () => {
-      signButton.style.display = 'none';
-      dutyNameInput.style.display = 'block';
-      dutyNameInput.focus();
-    });
-    addValidationEvents(dutyNameInput); // 添加驗證
-    
-    // 移除: 不再添加檔案上傳提示
-    // const fileNote = createFileUploadNote();
-    // content.appendChild(fileNote);
-    
-    // 錯誤容器
-    const errorContainer = document.createElement("div");
-    errorContainer.id = "form-error-container";
-    errorContainer.className = "form-error-container";
-    errorContainer.style.display = "none";
-    content.appendChild(errorContainer);
-    
-    // 添加時數計算的事件監聽
-    const startTimeInput = content.querySelector('#overtimeStartTime');
-    const endTimeInput = content.querySelector('#overtimeEndTime');
-    const calculatedHoursSpan = content.querySelector('#calculatedHours');
-    
-    const updateHours = () => {
-      const startVal = startTimeInput.value;
-      const endVal = endTimeInput.value;
-      const hours = calculateEstimatedOvertimeHours(startVal, endVal);
-      if (hours !== null && hours >= 0) {
-        calculatedHoursSpan.textContent = hours;
-        hoursDisplay.style.display = "block";
-      } else {
-        calculatedHoursSpan.textContent = "--";
-        hoursDisplay.style.display = "none";
-      }
-    };
-    
-    // 使用 jQuery 監聽 change 事件，確保 timepicker 選擇後觸發
-    if (startTimeInput) $(startTimeInput).on('change', updateHours);
-    if (endTimeInput) $(endTimeInput).on('change', updateHours);
-    
-    return content;
-  }
-
-  /**
-   * 創建請假申請表單內容
-   * @returns {HTMLElement} 表單內容元素
-   */
-  function createLeaveRequestFormContent() {
-    const content = document.createElement("div");
-    content.className = "form-content";
-    
-    // 使用日期範圍選擇器
-    const dateRangeGroup = createDateRangeInputGroup("leaveStartDate", "leaveEndDate", "日期");
-    content.appendChild(dateRangeGroup);
-    
-    // 假別選擇 - 已擴充假別選項
-    const leaveTypeGroup = createSelectInputGroup("leaveType", "假別類型", [
-      { value: "", label: "請選擇假別" },
-      { value: "事假", label: "事假" },
-      { value: "病假", label: "病假" },
-      { value: "喪假", label: "喪假" },
-      { value: "婚假", label: "婚假" },
-      { value: "公假", label: "公假" },
-      { value: "家庭", label: "家庭" },
-      { value: "特別休假", label: "特別休假" },
-      { value: "生理假", label: "生理假" }
-    ]);
-    content.appendChild(leaveTypeGroup);
-    
-    // 新增: 是否找到代班人員 (下拉選單)
-    const findReplacementGroup = createSelectInputGroup(
-      "leaveSubstituteStatus",
-      "是否找到代班夥伴",
-      [
-        { value: "", label: "請選擇..." },
-        { value: "有找到", label: "有找到" },
-        { value: "找不到夥伴", label: "找不到夥伴" }
-      ]
-    );
-    content.appendChild(findReplacementGroup);
-
-    // 新增: 代班夥伴姓名 (初始隱藏)
-    const replacementNameGroup = createTextInputGroup(
-      "leaveSubstituteName",
-      "代班夥伴本名",
-      "請鍵入代班夥伴本名"
-    );
-    replacementNameGroup.id = "substituteNameContainer"; // 給予 ID
-    replacementNameGroup.style.display = "none"; // 初始隱藏
-    content.appendChild(replacementNameGroup);
-
-    // 新增: 授權 Duty
-    const authorizingDutyGroup = createTextInputGroup(
-      "leaveAuthDuty",
-      "授權 Duty",
-      "請鍵入授權Duty本名"
-    );
-    // 確保授權 Duty 欄位是必填的
-    const authDutyInput = authorizingDutyGroup.querySelector('input');
-    if(authDutyInput) authDutyInput.required = true;
-    content.appendChild(authorizingDutyGroup);
-    
-    // 請假原因
-    const reasonGroup = createTextAreaInputGroup("leaveReason", "原因");
-    content.appendChild(reasonGroup);
-    
-    // 保留: 請假申請需要添加檔案上傳提示
-    const fileNote = createFileUploadNote();
-    content.appendChild(fileNote);
-    
-    // 錯誤容器
-    const errorContainer = document.createElement("div");
-    errorContainer.id = "form-error-container";
-    errorContainer.className = "form-error-container";
-    errorContainer.style.display = "none";
-    content.appendChild(errorContainer);
-    
-    // 添加事件監聽器以條件顯示代班人姓名
-    const findReplacementSelect = content.querySelector('#leaveSubstituteStatus');
-    const replacementNameDiv = content.querySelector('#substituteNameContainer');
-    const replacementNameInput = content.querySelector('#leaveSubstituteName');
-
-    if (findReplacementSelect && replacementNameDiv && replacementNameInput) {
-      findReplacementSelect.addEventListener('change', function() {
-        if (this.value === '有找到') {
-          replacementNameDiv.style.display = 'block';
-          replacementNameInput.required = true; // 選擇「有找到」時設為必填
-        } else {
-          replacementNameDiv.style.display = 'none';
-          replacementNameInput.required = false; // 其他情況取消必填
-          replacementNameInput.value = '';
-          clearFieldError('leaveSubstituteName');
-        }
-        // 重新驗證 leaveSubstituteStatus (因為 required 狀態可能變化)
-        validateField('leaveSubstituteStatus');
-        // 如果隱藏了，也要觸發一次驗證 (來清除可能存在的錯誤狀態)
-        if(this.value !== '有找到') validateField('leaveSubstituteName');
-      });
-    }
-    
-    return content;
-  }
-
-  /**
-   * 創建異動班別表單內容 - 優化版本
-   * @returns {HTMLElement} 表單內容元素
-   */
-  function createShiftChangeFormContent() {
-    const content = document.createElement("div");
-    content.className = "form-content";
-    
-    // 異動日期選擇
-    const dateGroup = createDateInputGroup("shiftDate", "日期");
-    content.appendChild(dateGroup);
-    
-    // 團隊選擇 (新增)
-    const teamGroup = createSelectInputGroup("teamType", "團隊", [
-      { value: "", label: "請選擇團隊" },
-      { value: "SV", label: "SV-外場" },
-      { value: "KT", label: "KT-內廚" }
-    ]);
-    content.appendChild(teamGroup);
-    
-    // 原班別選擇 (動態)
-    const originalShiftGroup = createSelectInputGroup("originalShift", "原班別", [
-      { value: "", label: "請先選擇團隊類別" }
-    ]);
-    content.appendChild(originalShiftGroup);
-    
-    // 新班別選擇 (動態)
-    const newShiftGroup = createSelectInputGroup("newShift", "新班別", [
-      { value: "", label: "請先選擇團隊類別" }
-    ]);
-    content.appendChild(newShiftGroup);
-    
-    // 添加重複班別檢查提示
-    const shiftWarning = document.createElement("div");
-    shiftWarning.id = "shiftWarning";
-    shiftWarning.style.display = "none";
-    shiftWarning.style.color = "#ff4444";
-    shiftWarning.style.fontSize = "14px";
-    shiftWarning.style.marginTop = "5px";
-    shiftWarning.style.marginBottom = "10px";
-    shiftWarning.style.padding = "10px";
-    shiftWarning.style.borderRadius = "5px";
-    shiftWarning.style.backgroundColor = "rgba(255, 68, 68, 0.1)";
-    shiftWarning.style.textAlign = "center";
-    shiftWarning.innerHTML = "<strong>系統提示：</strong>原班別與新班別相同，請選擇不同的班別";
-    content.appendChild(shiftWarning);
-    
-    // 異動原因
-    const reasonGroup = createTextAreaInputGroup("shiftReason", "原因");
-    content.appendChild(reasonGroup);
-    
-    // 移除: 不再添加檔案上傳提示
-    // const fileNote = createFileUploadNote();
-    // content.appendChild(fileNote);
-    
-    // 錯誤容器
-    const errorContainer = document.createElement("div");
-    errorContainer.id = "form-error-container";
-    errorContainer.className = "form-error-container";
-    errorContainer.style.display = "none";
-    content.appendChild(errorContainer);
-    
-    // 設置團隊選擇事件
-    const teamSelect = content.querySelector('#teamType');
-    const originalSelect = content.querySelector('#originalShift');
-    const newSelect = content.querySelector('#newShift');
-    
-    if (teamSelect && originalSelect && newSelect) {
-      // 班別映射表
-      const shiftOptions = {
-        'SV': [
-          { value: "", label: "請選擇班別" },
-          { value: "A1", label: "A1" },
-          { value: "A2", label: "A2" },
-          { value: "A3", label: "A3" },
-          { value: "B1", label: "B1" },
-          { value: "B2", label: "B2" },
-          { value: "B3", label: "B3" },
-          { value: "X1", label: "X1" },
-          { value: "X2", label: "X2" },
-          { value: "X3", label: "X3" }
-        ],
-        'KT': [
-          { value: "", label: "請選擇班別" },
-          { value: "KA", label: "KA" },
-          { value: "KB", label: "KB" }
-        ]
-      };
-      
-      // 團隊選擇事件處理
-      teamSelect.addEventListener('change', function() {
-        const selectedTeam = this.value;
-        
-        // 清空原有選項
-        while (originalSelect.options.length > 0) {
-          originalSelect.remove(0);
-        }
-        while (newSelect.options.length > 0) {
-          newSelect.remove(0);
-        }
-        
-        // 隱藏警告
-        shiftWarning.style.display = "none";
-        
-        // 如果選擇了團隊，填充班別選項
-        if (selectedTeam && shiftOptions[selectedTeam]) {
-          const options = shiftOptions[selectedTeam];
-          options.forEach(opt => {
-            const originalOption = new Option(opt.label, opt.value);
-            const newOption = new Option(opt.label, opt.value);
-            originalSelect.add(originalOption);
-            newSelect.add(newOption);
-          });
-          
-          // 清除錯誤標記
-          clearFieldError('originalShift');
-          clearFieldError('newShift');
-        } else {
-          // 未選擇團隊，顯示提示選項
-          originalSelect.add(new Option("請先選擇團隊類別", ""));
-          newSelect.add(new Option("請先選擇團隊類別", ""));
-        }
-      });
-      
-      // 班別選擇變更事件 - 檢查重複
-      function checkDuplicateShift() {
-        const originalValue = originalSelect.value;
-        const newValue = newSelect.value;
-        
-        // 如果兩者都有值且相同，顯示警告
-        if (originalValue && newValue && originalValue === newValue) {
-          shiftWarning.style.display = "block";
-          // 為新班別添加錯誤標示
-          showFieldError('newShift');
-        } else {
-          shiftWarning.style.display = "none";
-          // 清除錯誤標示
-          clearFieldError('newShift');
-        }
-      }
-      
-      // 添加變更事件監聽
-      originalSelect.addEventListener('change', checkDuplicateShift);
-      newSelect.addEventListener('change', checkDuplicateShift);
-    }
-    
-    return content;
-  }
-
-  /**
-   * 表單提交函數 - 補卡申請 (重構版)
-   * @param {Object} formData - 表單數據
-   * @param {Function} callback - 完成後的回調函數
-   */
-  async function submitCardCorrection(formData, callback) {
-    const idCode = elements.idInput.value;
-    
-    try {
-      console.log("開始提交補卡申請數據...");
-      UIUtils.displayLoading("處理中｜請稍候...");
-      
-      // 構建API參數
-      const apiParams = [
-        idCode,                // lastFour
-        formData.cardDate,     // date
-        formData.cardTime,     // time
-        formData.cardAction,   // action
-        formData.cardType,     // cardType
-        formData.cardReason,   // reason
-        formData.cardWitness,  // witness
-        formData.cardDuty      // 新增: duty
-      ];
-      
-      // 呼叫後端API
-      const result = await NetworkUtils.callGASWithRetry("submitCardCorrection", apiParams);
-      console.log("補卡申請API返回:", result);
-      
-      if (result.status === "success") {
-        // 成功響應 - 直接返回成功，不需要檔案上傳
-        callback(true, result.message || `補卡申請已成功提交，單號: ${result.requestId || "系統生成"}`, {
-          formType: 'card',
-          needFile: false // 標記不需要檔案上傳
-        });
-      } else {
-        // API調用失敗
-        callback(false, result.message || "提交失敗，請稍後再試", { stage: 'api' });
-      }
-    } catch (error) {
-      console.error("補卡申請流程錯誤:", error);
-      callback(false, error.message || "處理失敗，請稍後再試", { stage: 'api' });
-    }
-  }
-
-  /**
-   * 表單提交函數 - 加班申請 (重構版)
-   * @param {Object} formData - 表單數據
-   * @param {Function} callback - 完成後的回調函數
-   */
-  async function submitOvertimeRequest(formData, callback) {
-    const idCode = elements.idInput.value;
-    
-    try {
-      console.log("開始提交加班申請數據...");
-      UIUtils.displayLoading("處理中｜請稍候...");
-      
-      // 構建API參數
-      const apiParams = [
-        idCode,                     // lastFour
-        formData.overtimeDate,      // date
-        formData.overtimeType,      // 新增: 加班類型
-        formData.overtimeStartTime, // startTime
-        formData.overtimeEndTime,   // endTime
-        formData.overtimeReason,    // reason
-        formData.overtimeDuty       // 新增: duty簽名
-      ];
-      
-      // 呼叫後端API
-      const result = await NetworkUtils.callGASWithRetry("submitOvertimeRequest", apiParams);
-      console.log("加班申請API返回:", result);
-      
-      if (result.status === "success") {
-        // 成功響應 - 直接返回成功，不需要檔案上傳
-        callback(true, result.message || `加班申請已成功提交`, {
-          formType: 'overtime',
-          needFile: false // 標記不需要檔案上傳
-        });
-      } else {
-        // API調用失敗
-        callback(false, result.message || "提交失敗，請稍後再試", { stage: 'api' });
-      }
-    } catch (error) {
-      console.error("加班申請流程錯誤:", error);
-      callback(false, error.message || "處理失敗，請稍後再試", { stage: 'api' });
-    }
-  }
-
-  /**
-   * 表單提交函數 - 請假申請 (重構版)
-   * @param {Object} formData - 表單數據
-   * @param {Function} callback - 完成後的回調函數
-   */
-  async function submitLeaveRequest(formData, callback) {
-    const idCode = elements.idInput.value;
-    
-    try {
-      console.log("開始提交請假申請數據...");
-      UIUtils.displayLoading("處理中｜請稍候...");
-      
-      // 構建API參數
-      const apiParams = [
-        idCode,                       // lastFour
-        formData.leaveStartDate,      // startDate
-        formData.leaveEndDate,        // endDate
-        formData.leaveType,           // leaveType
-        formData.leaveReason,         // reason
-        formData.leaveSubstituteStatus, // 新增: 代班狀態
-        formData.leaveSubstituteName,   // 新增: 代班人姓名
-        formData.leaveAuthDuty          // 新增: 授權Duty
-      ];
-      
-      // 呼叫後端API
-      const result = await NetworkUtils.callGASWithRetry("submitLeaveRequest", apiParams);
-      console.log("請假申請API返回:", result);
-      
-      if (result.status === "success") {
-        // 成功響應 - 需要檔案上傳步驟
-        let successMessage = result.message || `請假申請已成功提交，單號: ${result.requestId || "系統生成"}`;
-        
-        // 如果有 requestId，準備上傳檔案頁面URL
-        if (result.requestId) {
-          const uploadUrl = `${WEB_APP_URL}?page=fileUpload&requestId=${result.requestId}&formType=leave&lastFour=${idCode}`;
-          callback(true, successMessage, {
-            formType: 'leave', // 指定表單類型
-            needFile: true,    // 標記需要檔案上傳
-            requestId: result.requestId,
-            uploadUrl: uploadUrl
-          });
-        } else {
-          // 沒有requestId，也返回成功
-          callback(true, successMessage, {
-            formType: 'leave',
-            needFile: false // 無法上傳檔案
-          });
-        }
-      } else {
-        // API調用失敗
-        callback(false, result.message || "提交失敗，請稍後再試", { stage: 'api' });
-      }
-    } catch (error) {
-      console.error("請假申請流程錯誤:", error);
-      callback(false, error.message || "處理失敗，請稍後再試", { stage: 'api' });
-    }
-  }
-
-  /**
-   * 表單提交函數 - 異動班別 (重構版)
-   * @param {Object} formData - 表單數據
-   * @param {Function} callback - 完成後的回調函數
-   */
-  async function submitShiftChange(formData, callback) {
-    const idCode = elements.idInput.value;
-    
-    try {
-      console.log("開始提交班別異動數據...");
-      UIUtils.displayLoading("處理中｜請稍候...");
-      
-      // 構建API參數
-      const apiParams = [
-        idCode,                     // lastFour
-        formData.shiftDate,         // date
-        formData.teamType,          // 團隊類型
-        formData.originalShift,     // originalShift
-        formData.newShift,          // newShift
-        formData.shiftReason        // reason
-      ];
-      
-      // 呼叫後端API
-      const result = await NetworkUtils.callGASWithRetry("submitShiftChange", apiParams);
-      console.log("班別異動API返回:", result);
-      
-      if (result.status === "success") {
-        // 成功響應 - 直接返回成功，不需要檔案上傳
-        callback(true, result.message || `班別異動申請已成功提交，單號: ${result.requestId || "系統生成"}`, {
-          formType: 'shift',
-          needFile: false // 標記不需要檔案上傳
-        });
-      } else {
-        // API調用失敗
-        callback(false, result.message || "提交失敗，請稍後再試", { stage: 'api' });
-      }
-    } catch (error) {
-      console.error("班別異動流程錯誤:", error);
-      callback(false, error.message || "處理失敗，請稍後再試", { stage: 'api' });
-    }
-  }
-
-  /**
-   * 驗證欄位
-   * @param {string} fieldId - 欄位ID
-   * @returns {boolean} - 是否有效
-   */
-  function validateField(fieldId) {
-    const field = document.getElementById(fieldId);
-    if (!field) return false;
-    
-    let isValid = true;
-    
-    // 根據欄位類型進行驗證
-    if (field.type === "file") {
-      isValid = field.files && field.files.length > 0;
-    } else if (field.tagName === "SELECT") {
-      isValid = !!field.value;
-    } else if (field.tagName === "TEXTAREA" || field.type === "text" || 
-             field.type === "password" || field.classList.contains("datepicker") || 
-             field.classList.contains("timepicker")) {
-      isValid = !!field.value.trim();
-    } else if (field.type === "hidden") {
-      isValid = !!field.value;
-    }
-    
-    // 如果欄位無效，則顯示錯誤提示
-    if (!isValid) {
-      showFieldError(fieldId);
-    }
-    
-    return isValid;
-  }
-
-  /**
-   * 顯示欄位錯誤提示
-   * @param {string} fieldId - 欄位ID
-   */
-  function showFieldError(fieldId) {
-    const field = document.getElementById(fieldId);
-    if (!field) return;
-    
-    // 找到關聯的表單組和錯誤標記
-    const formGroup = field.closest('.form-group');
-    if (!formGroup) return;
-    
-    const errorMark = formGroup.querySelector('.required-mark');
-    if (errorMark) {
-      errorMark.style.display = 'inline'; // 顯示錯誤標記
-    }
-    
-    // 設置欄位邊框為錯誤狀態
-    if (field.tagName === "SELECT" || field.tagName === "TEXTAREA" || 
-      field.tagName === "INPUT" || field.type === "text" || 
-      field.classList.contains("datepicker") || field.classList.contains("timepicker")) {
-      field.style.borderColor = "#ff4444";
-    }
-  }
-
-  /**
-   * 清除欄位錯誤提示
-   * @param {string} fieldId - 欄位ID
-   */
-  function clearFieldError(fieldId) {
-    const field = document.getElementById(fieldId);
-    if (!field) return;
-    
-    // 找到關聯的表單組和錯誤標記
-    const formGroup = field.closest('.form-group');
-    if (!formGroup) return;
-    
-    const errorMark = formGroup.querySelector('.required-mark');
-    if (errorMark) {
-      errorMark.style.display = 'none'; // 隱藏錯誤標記
-    }
-    
-    // 重置欄位邊框為正常狀態
-    if (field.tagName === "SELECT" || field.tagName === "TEXTAREA" || 
-      field.tagName === "INPUT" || field.type === "text" ||
-      field.classList.contains("datepicker") || field.classList.contains("timepicker")) {
-      field.style.borderColor = "#555";
-    }
-    
-    // 清除整體表單錯誤
-    const formErrorContainer = document.getElementById("form-error-container");
-    if (formErrorContainer) {
-      formErrorContainer.style.display = "none";
-    }
-  }
-
-  /**
-   * 為輸入欄位添加驗證事件處理
-   * @param {HTMLElement} element - 輸入元素
-   */
-  function addValidationEvents(element) {
-    if (!element || !element.id) return;
-    
-    const fieldId = element.id;
-    
-    // 1. blur事件 - 當用戶離開欄位時觸發驗證
-    element.addEventListener("blur", () => {
-      let isEmpty = false;
-      
-      // 根據不同元素類型判斷是否為空
-      if (element.type === "file") {
-        isEmpty = !element.files || element.files.length === 0;
-      } else if (element.tagName === "SELECT") {
-        isEmpty = !element.value;
-      } else if (element.tagName === "TEXTAREA" || element.type === "text" || 
-               element.type === "password" || element.classList.contains("datepicker") || 
-               element.classList.contains("timepicker")) {
-        isEmpty = !element.value.trim();
-      } else if (element.type === "hidden") {
-        isEmpty = !element.value;
-      }
-      
-      // 根據結果顯示或隱藏錯誤提示
-      if (isEmpty) {
-        showFieldError(fieldId);
-      } else {
-        clearFieldError(fieldId);
-      }
-    });
-    
-    // 2. input/change事件 - 當用戶修改內容時清除錯誤提示
-    const inputHandler = () => {
-      let hasValue = false;
-      
-      // 根據不同元素類型判斷是否有值
-      if (element.type === "file") {
-        hasValue = element.files && element.files.length > 0;
-      } else if (element.tagName === "SELECT") {
-        hasValue = !!element.value;
-      } else if (element.tagName === "TEXTAREA" || element.type === "text" || 
-               element.type === "password" || element.classList.contains("datepicker") || 
-               element.classList.contains("timepicker")) {
-        hasValue = !!element.value.trim();
-      } else if (element.type === "hidden") {
-        hasValue = !!element.value;
-      }
-      
-      // 如果有值，清除錯誤提示
-      if (hasValue) {
-        clearFieldError(fieldId);
-      }
-    };
-    
-    // 為不同類型的元素添加適當的事件監聽器
-    if (element.tagName === "SELECT") {
-      element.addEventListener("change", inputHandler);
-    } else if (element.type === "file") {
-      element.addEventListener("change", inputHandler);
-    } else {
-      element.addEventListener("input", inputHandler);
-    }
-    
-    // 特殊處理日期選擇器
-    if (element.classList.contains("datepicker")) {
-      $(element).on("change", function() {
-        if (this.value) clearFieldError(fieldId);
-      });
-    }
-    
-    // 特殊處理時間選擇器
-    if (element.classList.contains("timepicker")) {
-      $(element).on("change", function() {
-        if (this.value) clearFieldError(fieldId);
-      });
-    }
-  }
-
-  /**
-   * 驗證補卡表單欄位
-   * @param {Object} formData - 表單數據
-   * @returns {boolean} 是否有效
-   */
-  function validateCardCorrectionFields(formData) {
-    let isValid = true;
-    
-    // 驗證所有必填欄位
-    if (!validateField("cardDate")) isValid = false;
-    if (!validateField("cardTime")) isValid = false;
-    if (!validateField("cardAction")) isValid = false;
-    if (!validateField("cardType")) isValid = false;
-    if (!validateField("cardReason")) isValid = false;
-    if (!validateField("cardWitness")) isValid = false;
-    // 新增驗證
-    if (!validateField("cardDuty")) isValid = false;
-    
-    return isValid;
-  }
-
-  /**
-   * 驗證加班表單欄位
-   * @param {Object} formData - 表單數據
-   * @returns {boolean} 是否有效
-   */
-  function validateOvertimeFields(formData) {
-    let isValid = true;
-    
-    // 驗證所有必填欄位
-    if (!validateField("overtimeDate")) isValid = false;
-    if (!validateField("overtimeType")) isValid = false;
-    if (!validateField("overtimeStartTime")) isValid = false;
-    if (!validateField("overtimeEndTime")) isValid = false;
-    if (!validateField("overtimeReason")) isValid = false;
-    // 新增驗證
-    if (!validateField("overtimeDuty")) isValid = false;
-    
-    // 獲取錯誤容器
-    const errorContainer = document.getElementById("form-error-container");
-    
-    // 驗證開始時間必須早於結束時間
-    const hours = calculateEstimatedOvertimeHours(formData.overtimeStartTime, formData.overtimeEndTime);
-    if (hours === null || hours <= 0) {
-      // 如果時間欄位都有填寫，但計算結果無效
-      if (formData.overtimeStartTime && formData.overtimeEndTime) {
-        const startMinutes = parseInt(formData.overtimeStartTime.split(':')[0]) * 60 + 
-                           parseInt(formData.overtimeStartTime.split(':')[1]);
-        const endMinutes = parseInt(formData.overtimeEndTime.split(':')[0]) * 60 + 
-                         parseInt(formData.overtimeEndTime.split(':')[1]);
-        
-        // 只有當結束時間早於開始時間且不是跨日情況時才視為錯誤
-        if (endMinutes <= startMinutes && endMinutes !== 0) {
-          isValid = false;
-          
-          if (errorContainer) {
-            errorContainer.textContent = "結束時間必須晚於開始時間";
-            errorContainer.style.display = "block";
-          }
-          
-          showFieldError("overtimeStartTime");
-          showFieldError("overtimeEndTime");
-        }
-      }
-    }
-    
-    // 驗證原因欄位沒有非法字符
-    const reasonField = document.getElementById('overtimeReason');
-    const forbiddenRegex = /[+\-\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-    
-    if (reasonField && forbiddenRegex.test(reasonField.value)) {
-      isValid = false;
-      showFieldError("overtimeReason");
-      
-      if (errorContainer && errorContainer.style.display === 'none') {
-        errorContainer.textContent = "原因欄位包含無效符號或表情";
-        errorContainer.style.display = "block";
-      }
-      
-      // 添加特定警告
-      const reasonErrorSpan = document.createElement('span');
-      reasonErrorSpan.className = 'input-error temp-reason-warning';
-      reasonErrorSpan.style.color = '#ff4444';
-      reasonErrorSpan.style.fontSize = '12px';
-      reasonErrorSpan.style.display = 'block';
-      reasonErrorSpan.textContent = '請勿輸入 +、- 或表情符號';
-      
-      // 確保不重複添加警告
-      const existingWarning = reasonField.parentNode.querySelector('.temp-reason-warning');
-      if (!existingWarning && reasonField.parentNode) {
-        reasonField.parentNode.insertBefore(reasonErrorSpan, reasonField.nextSibling);
-      }
-    }
-    
-    return isValid;
-  }
-
-  /**
-   * 驗證請假表單欄位
-   * @param {Object} formData - 表單數據
-   * @returns {boolean} 是否有效
-   */
-  function validateLeaveFields(formData) {
-    let isValid = true;
-    
-    // 驗證所有必填欄位
-    if (!validateField("leaveStartDate")) isValid = false;
-    if (!validateField("leaveEndDate")) isValid = false;
-    if (!validateField("leaveType")) isValid = false;
-    if (!validateField("leaveReason")) isValid = false;
-    // 新增驗證
-    if (!validateField("leaveSubstituteStatus")) isValid = false;
-    // 條件驗證：只有當選擇 "有找到" 時，代班夥伴姓名才必填
-    if (formData.leaveSubstituteStatus === "有找到") {
-      if (!validateField("leaveSubstituteName")) isValid = false;
-    }
-    if (!validateField("leaveAuthDuty")) isValid = false;
-    
-    // 獲取錯誤容器
-    const errorContainer = document.getElementById("form-error-container");
-    
-    // 驗證開始日期必須不晚於結束日期
-    const days = calculateEstimatedLeaveDays(formData.leaveStartDate, formData.leaveEndDate);
-    if (days === null) {
-      // 只有當兩個日期都有值但計算失敗時報錯
-      if (formData.leaveStartDate && formData.leaveEndDate) {
-        isValid = false;
-        
-        if (errorContainer) {
-          errorContainer.textContent = "請選擇有效的開始與結束日期，且結束日期不能早於開始日期";
-          errorContainer.style.display = "block";
-        }
-        
-        showFieldError("leaveStartDate");
-        showFieldError("leaveEndDate");
-      }
-    }
-    
-    // 驗證原因欄位沒有非法字符
-    const reasonField = document.getElementById('leaveReason');
-    const forbiddenRegex = /[+\-\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu;
-    
-    if (reasonField && forbiddenRegex.test(reasonField.value)) {
-      isValid = false;
-      showFieldError("leaveReason");
-      
-      if (errorContainer && errorContainer.style.display === 'none') {
-        errorContainer.textContent = "原因欄位包含無效符號或表情";
-        errorContainer.style.display = "block";
-      }
-      
-      // 添加特定警告
-      const reasonErrorSpan = document.createElement('span');
-      reasonErrorSpan.className = 'input-error temp-reason-warning';
-      reasonErrorSpan.style.color = '#ff4444';
-      reasonErrorSpan.style.fontSize = '12px';
-      reasonErrorSpan.style.display = 'block';
-      reasonErrorSpan.textContent = '請勿輸入 +、- 或表情符號';
-      
-      // 確保不重複添加警告
-      const existingWarning = reasonField.parentNode.querySelector('.temp-warning');
-      if (!existingWarning && reasonField.parentNode) {
-        reasonField.parentNode.insertBefore(reasonErrorSpan, reasonField.nextSibling);
-      }
-    }
-    
-    return isValid;
-  }
-
-  /**
-   * 驗證班別異動表單欄位
-   * @param {Object} formData - 表單數據
-   * @returns {boolean} 是否有效
-   */
-  function validateShiftChangeFields(formData) {
-    let isValid = true;
-    
-    // 驗證所有必填欄位
-    if (!validateField("shiftDate")) isValid = false;
-    if (!validateField("teamType")) isValid = false;
-    if (!validateField("originalShift")) isValid = false;
-    if (!validateField("newShift")) isValid = false;
-    if (!validateField("shiftReason")) isValid = false;
-    
-    // 驗證新舊班別不能相同 - 修正：確保兩者都有值
-    if (formData.originalShift && formData.newShift && formData.originalShift === formData.newShift) {
-      isValid = false;
-      
-      // a獲取錯誤容器
-      const errorContainer = document.getElementById("form-error-container");
-      if (errorContainer) {
-        errorContainer.textContent = "新班別不能與原班別相同";
-        errorContainer.style.display = "block";
-      }
-      
-      // 設置班別欄位為錯誤狀態
-      showFieldError("originalShift");
-      showFieldError("newShift");
-      
-      // 顯示警告訊息
-      const shiftWarning = document.getElementById("shiftWarning");
-      if (shiftWarning) {
-        shiftWarning.style.display = "block";
-      }
-    }
-    
-    return isValid;
-  }
-
-/* ====================================
-     3) 事件監聽與初始化
-  =====================================*/
-
-  /**
-   * 設置事件監聽器
-   */
-  function setupEventListeners() {
-    // 切換密碼顯示
-    elements.toggleBtn.addEventListener("click", () => {
-      elements.idInput.type = (elements.idInput.type==="password") ? "text" : "password";
-      elements.eyeIcon.textContent = (elements.idInput.type==="password") ? "visibility" : "visibility_off";
-      elements.idInput.focus();
-    });
-
-    // 輸入驗證
-    elements.idInput.addEventListener("input", () => {
-      if (!/^\d*$/.test(elements.idInput.value)) {
-        elements.idInput.value = elements.idInput.value.replace(/\D/g, "");
-        elements.errorSpan.textContent = "只允許輸入 4 位數字";
-        elements.errorSpan.classList.add("show");
-      } else {
-        elements.errorSpan.textContent = "";
-        elements.errorSpan.classList.remove("show");
-      }
-      elements.idInput.setCustomValidity(elements.idInput.value.length!==4 ? "必須輸入 4 位數" : "");
-      if (validateIdCode(elements.idInput.value)) {
-        UIUtils.enableAllButtons();
-      } else {
-        UIUtils.disableAllButtons();
-      }
-    });
-    elements.idInput.addEventListener("blur", () => {
-      elements.errorSpan.textContent = "";
-      elements.errorSpan.classList.remove("show");
-      elements.idInput.setCustomValidity(elements.idInput.value.length!==4 ? "必須輸入 4 位數" : "");
-    });
-
-    // 影片教學
-    elements.closeVideoModal.addEventListener("click", hideVideoTutorialModal);
-    elements.tutorialVideo.addEventListener("error", () => {
-      elements.tutorialVideo.style.display = "none";
-      elements.videoFallback.style.display = "block";
-    });
-
-    // 無痕瀏覽器提示
-    elements.confirmIncognito.addEventListener("click", () => {
-      elements.incognitoPrompt.style.display = "none";
-    });
-    elements.cancelIncognito.addEventListener("click", () => {
-      alert("已取消｜無法使用系統");
-      window.location.href="about:blank";
-    });
-
-    // 功能按鈕
-    elements.allButtons.btnOn.addEventListener("click", () =>
-      startClockAction("上班", false, elements.allButtons.btnOn)
-    );
-    elements.allButtons.btnOff.addEventListener("click", () =>
-      startClockAction("下班", false, elements.allButtons.btnOff)
-    );
-
-    // 防抖後的定位 & 查詢
-    const debouncedTestLocation = debounce(testLocation, 300);
-    elements.allButtons.btnTest.addEventListener("click", () => {
-      debouncedTestLocation(elements.allButtons.btnTest);
-    });
-
-    const debouncedQueryRecords = debounce(queryTodayRecords, 300);
-    elements.allButtons.btnQuery.addEventListener("click", () => {
-      debouncedQueryRecords(elements.allButtons.btnQuery);
-    });
-
-    // 班表按鈕點擊事件 - 修改後的版本
-    elements.allButtons.btnSchedule.addEventListener("click", () => {
-      openSchedule(elements.allButtons.btnSchedule);
-    });
-
-    // 內部公告按鈕點擊事件 - 修改後的版本
-    elements.allButtons.btnNotice.addEventListener("click", () => {
-      openNotice(elements.allButtons.btnNotice);
-    });
-
-    // 表單按鈕點擊事件 - 維修中版本
-    elements.allButtons.btnForm.addEventListener("click", async () => {
-      // 設置操作狀態為進行中
-      ButtonStateManager.setOperationStatus(true);
-      UIUtils.disableAllButtons();
-      
-      const idCode = elements.idInput.value;
-      const button = elements.allButtons.btnForm;
-
-      if (!validateIdCode(idCode)) {
-        UIUtils.displayError("請鍵入完整的身分證後四碼");
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-        ButtonStateManager.setOperationStatus(false);
-        return;
-      }
-
-      if (!navigator.onLine) {
-        UIUtils.displayError("離線無法開啟表單");
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-        ButtonStateManager.setOperationStatus(false);
-        return;
-      }
-      
-      UIUtils.displayLoading("驗證權限中...");
-
-      try {
-        const authCheck = await NetworkUtils.callGASWithRetry("checkDeviceBinding", [idCode]);
-        if (authCheck.status !== "success") {
-          UIUtils.displayError(authCheck.message || "不在授權名單中: 開啟失敗");
-          UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-          UIUtils.enableAllButtonsExcept(button);
-          ButtonStateManager.setOperationStatus(false);
-          return;
-        }
-        
-        // 驗證通過，顯示表單
-        UIUtils.clearResponse();
-        showFormApplicationModal();
-
-      } catch (err) {
-        UIUtils.displayError(`驗證失敗: ${err.message}`);
-        UIUtils.startIndividualCooldown(button, CONFIG.COOLDOWN_MS, button.dataset.originalText);
-        UIUtils.enableAllButtonsExcept(button);
-      } finally {
-        // 無論成功或失敗，最後都應重置狀態
-        ButtonStateManager.setOperationStatus(false);
-        // 只有不在冷卻中的按鈕才重新啟用
-        if (!ButtonStateManager.isButtonCooling(button.id)) {
-            UIUtils.enableAllButtons();
-        } else {
-            UIUtils.enableAllButtonsExcept(button);
-        }
-      }
-    });
-
-    // 點擊背景關閉表單選擇模態框
-    const formAppModal = document.getElementById("formApplicationModal");
-    formAppModal.addEventListener("click", (e) => {
-      if (e.target === formAppModal) {
-        hideFormApplicationModal();
-      }
-    });
-
-    // 表單項目
-    document.getElementById("cardCorrectionForm").addEventListener("click", () => {
-      hideFormApplicationModal();
-      showCardCorrectionForm();
-    });
-
-    document.getElementById("overtimeForm").addEventListener("click", () => {
-      hideFormApplicationModal();
-      showOvertimeForm();
-    });
-
-    document.getElementById("leaveRequestForm").addEventListener("click", () => {
-      hideFormApplicationModal();
-      showLeaveRequestForm();
-    });
-
-    document.getElementById("shiftChangeForm").addEventListener("click", () => {
-      hideFormApplicationModal();
-      showShiftChangeForm();
-    });
-  }
-
-  /**
-   * 添加陰影立體風格返回按鈕樣式
-   */
-   function addFormBackButtonStyles() {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
-      /* 陰影立體風格按鈕樣式 */
-      .back-button-shadow {
-        position: absolute;
-        left: 15px;
-        background-color: #3a3a3a;
-        border: none;
-        color: white;
-        padding: 6px 12px;
-        display: flex;
-        align-items: center;
-        border-radius: 8px;
-        cursor: pointer;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3), 
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
-        transition: all 0.2s;
-      }
-      
-      .back-button-shadow .material-icons {
-        font-size: 20px;
-        margin-right: 6px;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-      }
-      
-      .back-button-shadow .back-text {
-        font-size: 14px;
-        font-weight: 500;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      }
-      
-      .back-button-shadow:hover {
-        background-color: #454545;
-        transform: translateY(-1px);
-        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4), 
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      }
-      
-      .back-button-shadow:active {
-        background-color: #333333;
-        transform: translateY(1px);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 
-                    inset 0 1px 2px rgba(0, 0, 0, 0.3);
-      }
-      
-      /* 響應式設計 */
-      @media (max-width: 480px) {
-        .back-button-shadow {
-          padding: 4px 10px;
-        }
-        
-        .back-button-shadow .material-icons {
-          font-size: 18px;
-          margin-right: 4px;
-        }
-        
-        .back-button-shadow .back-text {
-          font-size: 12px;
-        }
-      }
-    `;
-    document.head.appendChild(styleElement);
-  }
-
-  /**
-   * 添加SVG樣式
-   */
-  function addSvgStyles() {
-    $("<style>")
-      .prop("type", "text/css")
-      .html(`
-        /* SVG選項樣式 */
-        .svg-option {
-          overflow: hidden;
-        }
-        
-        .svg-option svg {
-          display: block;
-        }
-        
-        .svg-option svg text {
-          font-family: 'Roboto Mono', monospace;
-        }
-      `)
-      .appendTo("head");
-  }
-
-  /**
-   * 初始化SVG選項
-   */
-  function initSvgOptions() {
-    addSvgStyles();
-  }
-
-  /**
-   * 初始化函數
-   */
-  function init() {
-    DeviceIdManager.recoverDeviceId();
-    BrowserUtils.showSafariNotice();
-    setupEventListeners();
-    NetworkUtils.updateNetworkStatus();
-    elements.incognitoPrompt.style.display="flex";
-    setInterval(DeviceIdManager.validateStoredIds, CONFIG.CONSISTENCY_CHECK_INTERVAL);
-    
-    // 添加全局自定義CSS樣式
-    addCustomStyles();
-    
-    // 禁止表單左右滑動的樣式
-    addFormNoScrollStyles();
-    
-    // 使用新的集中式配置管理函數
-    initPickerStyles();
-    
-    // 初始化SVG選項
-    initSvgOptions();
-    
-    // 添加返回按鈕樣式
-    addFormBackButtonStyles();
-  }
-
-  /**
-   * 添加全局自定義CSS - 更新高度一致性
-   */
-  function addCustomStyles() {
-    $("<style>")
-      .prop("type", "text/css")
-      .html(`
-        /* jQuery UI Datetimepicker 自定義樣式 - 修正版 */
-        .ui-datepicker {
-          width: ${DATEPICKER_CONFIG.width}px;
-          min-width: ${DATEPICKER_CONFIG.minWidth}px;
-          max-width: ${DATEPICKER_CONFIG.maxWidth}px;
-          background: #333;
-          border: 1px solid #555;
-          border-radius: ${DATEPICKER_CONFIG.borderRadius};
-          box-shadow: ${DATEPICKER_CONFIG.boxShadow};
-          padding: 10px;
-          box-sizing: border-box;
-        }
-        
-        /* 確保日期選擇器顯示在正確位置 */
-        #ui-datepicker-div {
-          z-index: 10000;
-          background-color: ${DATEPICKER_CONFIG.background};
-          padding: 0;
-          border: none;
-          margin-top: 0;
-          box-shadow: ${DATEPICKER_CONFIG.boxShadow};
-        }
-        
-        /* 時間選擇器樣式 - 修改背景 */
-        .ui-timepicker-div {
-          width: ${TIMEPICKER_CONFIG.width}px;
-          min-width: ${TIMEPICKER_CONFIG.minWidth}px;
-          max-width: ${TIMEPICKER_CONFIG.maxWidth}px;
-          background-color: ${TIMEPICKER_CONFIG.background};
-          padding: ${TIMEPICKER_CONFIG.padding};
-          border-radius: 0;
-          border: none;
-          border-top: ${TIMEPICKER_CONFIG.borderTop};
-          box-shadow: none;
-        }
-        
-        /* 移除多餘背景層 */
-        .ui-datepicker-buttonpane,
-        .ui-timepicker-buttonpane {
-          background: transparent;
-          border: none;
-        }
-        
-        /* 確保日期/時間輸入框文字靠左 */
-        .form-input,
-        input.datepicker,
-        input.timepicker {
-          text-align: left;
-          padding-left: 15px;
-        }
-        
-        /* 輸入框固定高度 */
-        .form-input, .weekday-display, .date-input-container, .time-input-container, .radio-option {
-          height: 42px;
-          box-sizing: border-box;
-        }
-        
-        /* 星期顯示元素固定寬度和對齊 */
-        .weekday-display {
-          width: 60px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        
-        /* 隱藏時間標籤和文字 */
-        .ui-timepicker-div .ui_tpicker_time,
-        .ui-timepicker-div .ui_tpicker_time_label,
-        .ui-timepicker-div .ui_tpicker_hour_label,
-        .ui-timepicker-div .ui_tpicker_minute_label {
-          display: none;
-        }
-        
-        /* 完全隱藏滑塊 */
-        .ui-slider {
-          display: none;
-        }
-        
-        /* 時間選擇器選項居中 */
-        .ui-timepicker-div select {
-          width: 95%;
-          margin: 0 auto;
-          text-align: center;
-          text-align-last: center;
-          -moz-text-align-last: center;
-          -webkit-text-align-last: center;
-        }
-        
-        /* 確保選項文字居中 */
-        .ui-timepicker-div select option {
-          text-align: center;
-        }
-      `)
-      .appendTo("head");
-  }
-
-  /**
-   * 添加禁止表單左右滑動的樣式 - 星期顯示修復版
-   * @version 1.0.8
-   * @description 禁止表單左右滑動的同時確保星期顯示元素正確顯示
-   */
-   function addFormNoScrollStyles() {
-    $("<style>")
-      .prop("type", "text/css")
-      .html(`
-        /* 禁止表單內容左右滑動 */
-        .form-content {
-          overflow-x: hidden !important;
-        }
-        
-        /* 確保表單容器不超出邊界，但保留足夠空間給星期顯示 */
-        .form-modal {
-          overflow-x: hidden !important;
-          max-width: 450px !important;
-          width: 90% !important;
-        }
-        
-        /* 修改內部元素確保不超出容器但保留星期顯示所需空間 */
-        .form-group,
-        .form-input,
-        .form-textarea,
-        .radio-container,
-        .form-error-container {
-          max-width: 100% !important;
-          box-sizing: border-box !important;
-        }
-        
-        /* 確保日期輸入容器有足夠空間容納星期顯示 */
-        .date-input-container {
-          position: relative !important;
-          width: calc(100% - 90px) !important;
-          max-width: calc(100% - 90px) !important;
-          box-sizing: border-box !important;
-          margin-right: 90px !important; /* 為星期顯示預留空間 */
-        }
-        
-        /* 確保星期顯示元素始終可見 */
-        .weekday-display {
-          position: absolute !important;
-          right: -90px !important;
-          top: 0 !important;
-          height: 42px !important;
-          width: 80px !important;
-          display: flex !important;
-          justify-content: center !important;
-          align-items: center !important;
-          visibility: visible !important;
-          z-index: 10 !important; /* 確保顯示層級高於其他元素 */
-        }
-        
-        /* 時間輸入容器特別處理 */
-        .time-input-container {
-          max-width: 100% !important;
-          box-sizing: border-box !important;
-        }
-        
-        /* 錯誤訊息置中 */
-        .form-error-container {
-          text-align: center !important;
-        }
-        
-        /* 增強跨平台響應式設計 */
-        @media (max-width: 480px) {
-          .form-modal {
-            width: 95% !important;
-            max-width: 95% !important;
-          }
-          
-          /* 移動設備上調整星期顯示尺寸 */
-          .weekday-display {
-            width: 70px !important;
-            right: -80px !important;
-            font-size: 14px !important;
-          }
-        }
-      `)
-      .appendTo("head");
-  }
-
-  // 添加 postMessage 訊息監聽器（確保只添加一次）
-  if (!window.hasAddedCloseWindowListener) { 
-    window.addEventListener('message', function(event) {
-      console.log('[主頁面] 收到 Message:', '來源:', event.origin, '資料:', event.data); 
-      
-      const expectedOrigin = "https://script.google.com";
-      if (event.origin !== expectedOrigin) {
-        console.log('[主頁面] 忽略的訊息：來源不符。');
-        return; 
-      }
-      
-      if (event.data && event.data.action === 'closeUploadWindow' && event.data.requestId) {
-        const requestIdToClose = String(event.data.requestId);
-        console.log(`[主頁面] 收到有效關閉請求，RequestId: ${requestIdToClose}`);
-         
-        const targetWindow = window.openedUploadWindows[requestIdToClose];
-        console.log(`[主頁面] 根據 RequestId 查找到的視窗參照:`, targetWindow); 
-         
-        if (targetWindow) {
-          if (!targetWindow.closed) {
-            console.log(`[主頁面] 找到視窗且未關閉，準備執行 close()`);
-            try {
-              targetWindow.close();
-              console.log(`[主頁面] targetWindow.close() 已呼叫`); 
-            } catch (e) {
-              console.error(`[主頁面] 執行 targetWindow.close() 時出錯:`, e); 
-            }
-            
-            setTimeout(() => {
-                delete window.openedUploadWindows[requestIdToClose]; 
-                console.log(`[主頁面] 已移除追蹤，RequestId: ${requestIdToClose}`);
-            }, 500);
-          } else {
-            console.log(`[主頁面] 視窗先前已關閉`);
-            delete window.openedUploadWindows[requestIdToClose]; 
-          }
-        } else {
-           console.warn(`[主頁面] 找不到要關閉的視窗參照。`);
-           console.log('[主頁面] 當前的追蹤狀態:', window.openedUploadWindows); 
-        }
-      }
-    }, false);
-    window.hasAddedCloseWindowListener = true; 
-    console.log("已添加關閉視窗的 Message 事件監聽器。");
-  }
-
-  window.addEventListener("online", NetworkUtils.updateNetworkStatus);
-  window.addEventListener("offline", NetworkUtils.updateNetworkStatus);
-  window.addEventListener("load", init);
-
-</script>
+<script src="ui.js" defer></script>
+<script src="form-handler.ui.js" defer></script>
+<script src="main.js" defer></script>
 </body>
 </html>
