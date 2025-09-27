@@ -7,7 +7,7 @@ window.App = window.App || {};
 
   // 預設配置
   const DEFAULT_CONFIG = {
-    WEB_APP_URL: "https://script.google.com/macros/s/AKfycbzEbMJPxjth4jDYm1gjjbZdbF2Mqhgg2BmsBS1VSMCAgnVA6b_YN00514rYZ8jv4NWr/exec",
+    WEB_APP_URL: "https://script.google.com/macros/s/AKfycbyrIw_NFN3chyn3XAP5V7Ab3Z67zQJwoM56d5i7tJBB0B3rEVGsPJQBWAf0WEN74sz-/exec",
     COOLDOWN_MS: 5000,
     API_TIMEOUT: 30000,
     DEVICE_ID_KEY: 'OS_DEVICE_ID',
