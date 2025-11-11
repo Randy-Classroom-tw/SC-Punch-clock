@@ -12,7 +12,7 @@ window.App = window.App || {};
     API_TIMEOUT: 30000,
     DEVICE_ID_KEY: 'OS_DEVICE_ID',
     APP_VERSION: '19.9.8',
-    SCHEDULE_URL: "https://docs.google.com/spreadsheets/d/1IlbSMjDwpv5YnJDwP6ctV-1iJiv6Rzrp--HcTKZUcWo/edit?usp=drive_link",  // 排班表
+    SCHEDULE_URL: "https://docs.google.com/spreadsheets/d/1t53A0yNrRHUh35hqbS8nwsCiz8o0wkB0AdQs20i1mwc/edit?usp=sharing",  // 排班表
     NOTICE_URL: "https://docs.google.com/document/d/1pASDU2UOVH3U9Wm4KfnZOMac5wI43XYHJ9uxtriwBCQ/edit?usp=sharing",    // 公告
     CONSISTENCY_CHECK_INTERVAL: 30000,
     
